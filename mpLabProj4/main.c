@@ -9,95 +9,81 @@
 //  turn off the watch dog timer
 //#pragma config WDT = OFF
 
-//  test struct with pointer to function
-struct Data
-{
-	int x;
-	char y;
-	void (*f2)(int anInt);
-};
+#define TICK_SECOND 1000
+#define TICK_MINUTE (TICK_SECOND * 60)
+#define TICK_HOUR (TICK_MINUTE * 60)
+#define CARBON_DLEAY_MINUTES (TICK_MINUTE * 8)
 
-//  declare function prototype
-void f1(int x);
+#define TRIGGER_MEASURECARBON 8
 
-void main (void)
-{
- 
-	//  declare instance of struct
-  	struct Data myData;
-	int i = 0;
-	int j = 0;
-	int k = 0;
-	
-	int a = 39;
-    int b = 3;
-    int c = 0;
+// Declarations
+typdef bool enum { false=0, true=1 };
 
-	char myBuff[20];
-	char myBuf1[] = "hello world";
+// Init.c methods
+void initialize();
+void runTasks();
 
-	sprintf(myBuff,"%#010x", i);
- 	
-	TRISB = 0;
-  	PORTB = 0;
+// Handlers
+bool takeSemaphore(bool);
+void giveSemaphore(bool);
 
-	//  assign values to struct members
-  	myData.f2 = f1;
-  	myData.x = 3;
-  	myData.y = 'a';
+// Tasks
+void scheduler();           // handles timing events and triggers timing related tasks
+void measureCarbon();       // triggered by scheduler, measures data and stores result in buffer
+void measureSalinity();     // ..
+void measureFlowRate();     // ..
+void measureTemperature();  // ..
+void writeSRAM();           // triggered by write request, writes value from some buffer
+void readSRAM();            // triggered by read request, stores value to some buffer
+void showDisplay();         // triggered by button ISR
+void tickTimer();           // pseudo timer function
 
-	//  test print
-  	printf ("Hello, world!\n");
-	printf ("%s\n", myBuf1);
+// Variables
+int tick;
+bool sMeasureCarbon;
 
-	//  test sprintf
-
-	sprintf(myBuff, "hello world");
-
-	printf("say what %s\n", myBuff);
-
-	//  test call of function in struct
-  	myData.f2(myData.x);
-	
-	for (k = 0; k < 100; k++)
-	{
-	  	PORTB = 1;
-
-		for (i = 0; i < 1000; i++)
-		{
-			j = j + 1;
-		}
-		
-		PORTB = 2;
-
-		for (i = 0; i < 1000; i++)
-		{
-			j = j + 1;
-		}
-
-	}
-
-    c = a + b;
-    printf ("a+b is %i\n", c);
-    c = a - b;
-    printf ("a-b is %i\n", c);
-    c = a * b;
-    printf ("a*b is %i\n", c);
-    c = a / b;
-    printf ("a/b is %i\n", c);
-
-	b = 10;
-    c = a / b;
-    printf ("a/b is %i\n", c);
-
-  	while (1)
-
-    ;
+int main(char *args) {
+	initialize();
+    
+	runTasks();
+    
+    return 0;
 }
 
-//  test function
-void f1(int y)
-{
-	y = y+1;
-    return;
+void initialize() {
+    tick = 0;
+    sMeasureCarbon = FALSE;
+}
+
+void runTasks() {
+    for ( ; ; ) {
+        scheduler();
+        
+        if (priority < 1) {
+            measureCarbon();
+            measureSalinity();
+            measureFlowRate();
+            measureTemperature();
+        }
+        
+        writeSRAM();
+        readSRAM();
+        
+        if (priority < 2) {
+            showDisplay();
+        }
+        
+        tickTimer();
+    }
+}
+
+void scheduler() {
+    // example of trigger
+    if (tick % CARBON_DLEAY_MINUTES == 0) {
+        giveSemaphore(sMeasureCarbon);
+    }
+}
+
+void tickTimer() {
+    tick++;
 }
