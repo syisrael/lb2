@@ -17,9 +17,9 @@
 #define TRIGGER_MEASURECARBON 8
 
 // Declarations
-typdef bool enum { false=0, true=1 };
+typdef bool enum { false= 0, true = 1 };
 
-// Init.c methods
+// main.c methods
 void initialize();
 void runTasks();
 
@@ -59,19 +59,16 @@ void runTasks() {
     for ( ; ; ) {
         scheduler();
         
-        if (priority < 1) {
-            measureCarbon();
-            measureSalinity();
-            measureFlowRate();
-            measureTemperature();
-        }
+        measureCarbon();
+        measureSalinity();
+        measureFlowRate();
+        measureTemperature();
         
         writeSRAM();
         readSRAM();
         
-        if (priority < 2) {
-            showDisplay();
-        }
+        showDisplay();
+        maintenance():
         
         tickTimer();
     }
@@ -84,6 +81,35 @@ void scheduler() {
     }
 }
 
+void powerOffHardware();
+
+void maintenance() {
+    if (!sHardware) {
+        powerOffHardware();
+    }
+}
+
 void tickTimer() {
     tick++;
+}
+
+bool takeSemaphore(bool s) {
+    switch (s) {
+    case true:
+        s = false;
+        return true;
+    default:
+        // signal pseudo wait
+        return false;
+    }
+}
+void giveSemaphore(bool s) {
+    switch (s) {
+    case false:
+        s = true;
+        break;
+    default:
+        // signal pseudo wait
+        break;
+    }
 }
