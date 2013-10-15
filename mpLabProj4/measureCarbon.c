@@ -1,4 +1,4 @@
-// to put in initialzation
+// to put in initialzation TEST
 /*
 MOVLB 0xF ; Set BSR for banked SFRs
 CLRF PORTA ; Initialize PORTA by
