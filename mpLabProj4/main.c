@@ -3,8 +3,8 @@
 #include <stdio.h>
 #include <stddef.h>
 //#include <p18f452.h>
-
-#include <p18f25k22.h>
+//#include <p18f25k22.h>
+#include <p16f877a.h>
 
 //  turn off the watch dog timer
 //#pragma config WDT = OFF
