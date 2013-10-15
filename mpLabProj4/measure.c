@@ -54,9 +54,70 @@ RA0 = 0;
 //write to SRAM 
 writeSRAM() //attach carbonMeasure
 
+}
+
+void measureFlowRate()
+{
+
+// send power on to measure circuit
 
 
+// wait until circuit is stable
 
+
+// perform measurement 
+
+
+// power off measureing circuit
+
+
+// convert to correct format 
+
+
+//write to SRAM 
+
+}
+
+void measureSalinity()
+{
+// send power on to measure circuit
+
+
+// wait until circuit is stable
+
+
+// perform measurement 
+
+
+// power off measureing circuit
+
+
+// convert to correct format 
+
+
+//write to SRAM 
+
+
+}
+
+void measureTemperature()
+{
+// send power on to measure circuit
+
+
+// wait until circuit is stable
+
+
+// perform measurement 
+
+
+// power off measureing circuit
+
+
+// convert to correct format 
+
+
+//write to SRAM 
 
 
 }
