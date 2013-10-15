@@ -1,4 +1,3 @@
-
 // to put in initialzation
 /*
 MOVLB 0xF ; Set BSR for banked SFRs
@@ -23,7 +22,7 @@ void measureCarbon()
 // send power on to measure circuit
 
 //digital I/O to power controller initialzed as output
-RA0 = 1;
+RB1 = 1;
 
 // wait until circuit is stable
 //Delay by amount
@@ -64,6 +63,7 @@ writeSRAM() //attach carbonMeasure
 
 
 //Move to initialization section
+//Need to figure out how to set the clock to FRC clock source
 
 void ADCinit(){
    /* ADCON2
