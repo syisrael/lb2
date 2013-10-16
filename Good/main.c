@@ -34,7 +34,7 @@ void ADCRead() {
 void main() {
     TRISA = 0b1111111;
     ADCON0 = 0b10000000;    // Fosc/64, channel 0 (AN0)
-    ADCON1 = 0b10001111;    // AN0=Analog input, AN3=V_REF+, AN2=V_REF-
+    ADCON1 = 0b10001111;    // Analog=AN3, AN3=V_REF+, AN2=V_REF-
     
     ADCON0bits.ADON = 0b1;
     
