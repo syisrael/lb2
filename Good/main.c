@@ -15,53 +15,36 @@
 #pragma config WRTC=OFF             // Configuration Register Write Protection
 #pragma config PWRT=OFF              // Power up timer off
 
-//#pragma config FOSC = INTOSCIO_EC
+typedef unsigned char byte;
 
-//  declare function prototype
-unsigned int ADCRead(unsigned char ch);
-
-void main (void)
-{
-    int i = 0,b = 0;
-    //PORTA = 0b0000000;
-    TRISA = 0b1111111;
-    ADCON0 = 0b00000000;
-    ADCON1 = 0b10000000;
-    ADCON0bits.ADON = 0x01;
-
-            TRISC = 0;
-          PORTC = 0;
-        TRISD = 0;
-        PORTD = 0;
-
-          while (1){
-            ADCON0bits.GO_DONE = 1;
-            //ADCON0 = 0b00001001;
-            //ADCON0bits.ADON = 1;
-            while(ADCON0bits.GO_DONE != 0);
-            //ADCON0bits.ADON = 0;
-            //ADCON0 = 0b00001000;
-            PORTC = ADRESL;
-            PORTD = ADRESH;
-            i++;
-            for(b = 0; b < 10000;b++);
-        }
+void delay() {
+    int d;
+    for(d = 0; d < 10000; d++);
 }
 
-//Function to Read given ADC channel AN0=000, AN1=001, AN3=011
-unsigned int ADCRead(unsigned char ch){
-   //if(ch>7) return 0;  //Invalid Channel
-   ADCON0=0x00;
+void ADCSelectChannel(byte channel) {
+    ADCON0bits.CHS = channel;
+}
 
-   ADCON0=(ch<<3);   //Select ADC Channel
+void ADCRead() {
+    ADCON0bits.GO_DONE = 0b1;
+    while(ADCON0bits.GO_DONE != 0b0);
+}
 
-   ADCON0bits.ADON = 1;  //switch on the adc module
-
-   ADCON0bits.GO_NOT_DONE=1;  //Start conversion
-
-   while(ADCON0bits.GO_NOT_DONE); //wait for the conversion to finish
-
-   ADCON0bits.ADON=0;  //switch off adc
-
-   return ADRESL;
+void main() {
+    TRISA = 0b1111111;
+    ADCON0 = 0b10000000;    // Fosc/64, channel 0 (AN0)
+    ADCON1 = 0b10001111;    // AN0=Analog input, AN3=V_REF+, AN2=V_REF-
+    
+    ADCON0bits.ADON = 0b1;
+    
+    TRISC = PORTC = TRISD = PORTD = 0b00000000; // Enable ports for digital output
+    
+    //ADCSelectChannel(0b000); // Select channel AN0
+    while(1) {
+        ADCRead();
+        PORTC = ADRESL;
+        PORTD = ADRESH;
+        delay();
+    }
 }
