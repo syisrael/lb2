@@ -9,12 +9,18 @@
 //  turn off the watch dog timer
 //#pragma config WDT = OFF
 
-#define TICK_SECOND 100000
-#define TICK_MINUTE (TICK_SECOND * 60)
-#define TICK_HOUR (TICK_MINUTE * 60)
-#define CARBON_DLEAY_MINUTES (TICK_MINUTE * 8)
+#define     TICK_SECOND             100000
+#define     TICK_MINUTE             (TICK_SECOND * 60)
+#define     TICK_HOUR               (TICK_MINUTE * 60)
+#define     CARBON_DLEAY_MINUTES    (TICK_MINUTE * 8)
 
-#define TRIGGER_MEASURECARBON 8
+#define     SRAM_STORED_VALUES      16
+#define     SRAM_SELECT_CARBON      0
+#define     SRAM_SELECT_SALINITY    1
+#define     SRAM_SELECT_FLOWRATE    2
+#define     SRAM_SELECT_TEMP        3
+
+#define     TRIGGER_MEASURECARBON   8
 
 // Declarations
 typdef enum { false= 0, true = 1 } bool;
@@ -38,8 +44,12 @@ void tickTimer();           // pseudo timer function
 // Variables
 bool sMeasureCarbon, sMeasureSalinity, sMeasureFlowRate, sMeasureTemperature, sSRAMWrite, sSRAMRead;
 
-short carbonValue, salinityValue, flowRateValue, temperatureValue;
-short SRAMWriteValue, SRAMReadValue;
+unsigned short carbonValue, salinityValue, flowRateValue;
+short temperatureValue;
+unsigned short SRAMWriteValue, SRAMReadValue;
+
+byte SRAMAddressPtrs[4];
+byte SRAMSelector;
 
 int main(char *args) {
 	initialize();
@@ -55,6 +65,11 @@ void initialize() {
     
     // Program memory
     sMeasureCarbon = false;
+    
+    SRAMSelector = 0;
+    // Carbon, Salinity, Flow Rate, Temperature
+    for (int i=0; i < 4; i++)
+        SRAMAddressPtrs[i] = (0 * SRAM_STORED_VALUES);
 }
 
 void runTasks() {
