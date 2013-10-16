@@ -16,90 +16,76 @@
 #define     PIN_D6      <change me>
 #define     PIN_D7      <change me>
 
-extern bool sSRAMWrite, sSRAMRead;
-extern unsigned short SRAMWriteValue, SRAMReadValue;
 extern byte *SRAMAddressPtrs;
-extern byte SRAMSelector;
-byte index;
 
-void writeSRAM();
-void readSRAM();
-
-void writeSRAM() {
+void writeSRAM(byte selector, short data) {
     byte tempAddress;
-    if (sSRAMWrite) {
-        // Select address block for type of measurement
-        tempAddress = SRAMAddressPtrs[SRAMSelector] + (SRAMSelector * SRAM_STORED_VALUES);
-        
-        // Set address pins from stored value
-        PIN_A0 = tempAddress & 1;
-        PIN_A1 = tempAddress >> 1 & 1;
-        PIN_A2 = tempAddress >> 2 & 1;
-        PIN_A3 = tempAddress >> 3 & 1;
-        
-        // Set data pins on SRAM from a stored value in PIC memory
-        PIN_D0 = SRAMWriteValue & 1;
-        PIN_D1 = SRAMWriteValue >> 1 & 1;
-        PIN_D2 = SRAMWriteValue >> 2 & 1;
-        PIN_D3 = SRAMWriteValue >> 3 & 1;
-        PIN_D4 = SRAMWriteValue >> 4 & 1;
-        PIN_D5 = SRAMWriteValue >> 5 & 1;
-        PIN_D6 = SRAMWriteValue >> 6 & 1;
-        PIN_D7 = SRAMWriteValue >> 7 & 1;
-        
-        // Complete write cycle on hardware SRAM
-        // sleep
-        PIN_OE = 1;
-        PIN_WE = 0;
-        PIN_HZ = 0;
-        // sleep
-        PIN_OE = 1;
-        PIN_WE = 1;
-        PIN_HZ = 0;
-        // sleep
-        PIN_OE = 1;
-        PIN_WE = 1;
-        PIN_HZ = 1;
-        
-        // Increment SRAM pointer for measurement block
-        SRAMAddressPtrs[SRAMSelector] = (SRAMAddressPtrs[SRAMSelector] + 1) % 16 + (SRAMSelector * SRAM_STORED_VALUES);
-        
-        // Reset control flag
-        sSRAMWrite = false;
-    }
+    // Select address block for type of measurement
+    tempAddress = SRAMAddressPtrs[selector] + (selector * SRAM_STORED_VALUES);
+    
+    // Set address pins from stored value
+    PIN_A0 = tempAddress & 1;
+    PIN_A1 = tempAddress >> 1 & 1;
+    PIN_A2 = tempAddress >> 2 & 1;
+    PIN_A3 = tempAddress >> 3 & 1;
+    
+    // Set data pins on SRAM from a stored value in PIC memory
+    PIN_D0 = data & 1;
+    PIN_D1 = data >> 1 & 1;
+    PIN_D2 = data >> 2 & 1;
+    PIN_D3 = data >> 3 & 1;
+    PIN_D4 = data >> 4 & 1;
+    PIN_D5 = data >> 5 & 1;
+    PIN_D6 = data >> 6 & 1;
+    PIN_D7 = data >> 7 & 1;
+    
+    // Complete write cycle on hardware SRAM
+    delay();
+    PIN_OE = 1;
+    PIN_WE = 0;
+    PIN_HZ = 0;
+    delay();
+    PIN_OE = 1;
+    PIN_WE = 1;
+    PIN_HZ = 0;
+    delay();
+    PIN_OE = 1;
+    PIN_WE = 1;
+    PIN_HZ = 1;
+    
+    // Increment SRAM pointer for measurement block
+    SRAMAddressPtrs[selector] = (SRAMAddressPtrs[selector] + 1) % 16 + (selector * SRAM_STORED_VALUES);
 }
 
-void readSRAM() {
-    byte tempAddress;
-    if (sSRAMRead) {
-        // Reads previous value
-        tempAddress = (SRAMAddressPtrs[SRAMSelector] + SRAM_STORED_VALUES - 1) % SRAM_STORED_VALUES + (SRAMSelector * SRAM_STORED_VALUES);
-        
-        // Set address pins from stored value
-        PIN_A0 = tempAddress & 1;
-        PIN_A1 = tempAddress >> 1 & 1;
-        PIN_A2 = tempAddress >> 2 & 1;
-        PIN_A3 = tempAddress >> 3 & 1;
-
-        
-        // Read data pins from SRAM and store value in PIC memory
-        // sleep
-        SRAMReadValue = PIN_D7;
-        SRAMReadValue <<= 1;
-        SRAMReadValue |= PIN_D6;
-        SRAMReadValue <<= 1;
-        SRAMReadValue |= PIN_D5;
-        SRAMReadValue <<= 1;
-        SRAMReadValue |= PIN_D4;
-        SRAMReadValue <<= 1;
-        SRAMReadValue |= PIN_D3;
-        SRAMReadValue <<= 1;
-        SRAMReadValue |= PIN_D2;
-        SRAMReadValue <<= 1;
-        SRAMReadValue |= PIN_D1;
-        SRAMReadValue <<= 1;
-        SRAMReadValue |= PIN_D0;
-        
-        sSRAMRead = false;
-    }
+short readSRAM(byte selector, byte history) {
+    short data;
+    
+    // Reads previous value
+    history = (SRAMAddressPtrs[selector] + SRAM_STORED_VALUES - history) % SRAM_STORED_VALUES + (selector * SRAM_STORED_VALUES);
+    
+    // Set address pins from stored value
+    PIN_A0 = history & 1;
+    PIN_A1 = history >> 1 & 1;
+    PIN_A2 = history >> 2 & 1;
+    PIN_A3 = history >> 3 & 1;
+    
+    // Read data pins from SRAM and store value in PIC memory
+    delay();
+    data = PIN_D7;
+    data <<= 1;
+    data |= PIN_D6;
+    data <<= 1;
+    data |= PIN_D5;
+    data <<= 1;
+    data |= PIN_D4;
+    data <<= 1;
+    data |= PIN_D3;
+    data <<= 1;
+    data |= PIN_D2;
+    data <<= 1;
+    data |= PIN_D1;
+    data <<= 1;
+    data |= PIN_D0;
+    
+    return data;
 }
