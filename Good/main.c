@@ -17,8 +17,8 @@
 
 
 
-#define     PIN_WE      PORTCbits.RC5
-#define     PIN_OE      PORTCbits.RC6
+#define     PIN_WE      PORTCbits.RC7
+#define     PIN_OE      PORTCbits.RC8
 #define     PIN_HZ      TRISD
 
 #define     PIN_A0      PORTCbits.RC0
@@ -26,6 +26,8 @@
 #define     PIN_A2      PORTCbits.RC2
 #define     PIN_A3      PORTCbits.RC3
 #define     PIN_A4      PORTCbits.RC4
+#define     PIN_A5      PORTCbits.RC5
+#define     PIN_A6      PORTCbits.RC6
 
 #define     PIN_D0      PORTDbits.RD0
 #define     PIN_D1      PORTDbits.RD1
@@ -49,13 +51,25 @@ void delay() {
     for(d = 0; d < 100; d++);
 }
 
+void setBusSRAM() {
+
+}
+void setBusPIC() {
+
+}
+
 void writeSRAM(byte selector, short data) {
+    setBusPIC();
+    delay();
+    
     // Set address pins from stored value
     PIN_A0 = SRAMAddressPtrs[selector] & 0b1;
     PIN_A1 = SRAMAddressPtrs[selector] >> 1 & 0b1;
     PIN_A2 = SRAMAddressPtrs[selector] >> 2 & 0b1;
     PIN_A3 = SRAMAddressPtrs[selector] >> 3 & 0b1;
     PIN_A4 = SRAMAddressPtrs[selector] >> 4 & 0b1;
+    PIN_A5 = SRAMAddressPtrs[selector] >> 5 & 0b1;
+    PIN_A6 = SRAMAddressPtrs[selector] >> 6 & 0b1;
 
     // Set data pins on SRAM from a stored value in PIC memory
     PIN_D0 = data & 0b1;
@@ -91,10 +105,13 @@ short readSRAM(byte selector, short history) {
     PIN_A2 = (history >> 2) & 0b1;
     PIN_A3 = (history >> 3) & 0b1;
     PIN_A4 = (history >> 4) & 0b1;
+    PIN_A5 = (history >> 5) & 0b1;
+    PIN_A6 = (history >> 6) & 0b1;
 
     // Read data pins from SRAM and store value in PIC memory
     PIN_HZ = 0xf;
     PIN_OE = 0b0;
+    setBusSRAM();
     delay();
     data = PIN_D7;
     data <<= 0b1;
@@ -112,6 +129,7 @@ short readSRAM(byte selector, short history) {
     data <<= 0b1;
     data |= PIN_D0;
     delay();
+    setBusPIC();
     PIN_HZ = 0x0;
     PIN_OE = 0b1;
     delay();
