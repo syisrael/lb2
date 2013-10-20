@@ -20,6 +20,29 @@ void delay() {
     for(d = 0; d < 100; d++);
 }
 
+void ADCSelectChannel(byte channel) {
+    ADCON0bits.CHS = channel;
+}
+
+void ADCRead() {
+    ADCON0bits.GO_DONE = 0b1;
+    while(ADCON0bits.GO_DONE != 0b0);
+}
+
 void main() {
+    TRISA = 0b1111111;
+    ADCON0 = 0b10000000;    // Fosc/64, channel 0 (AN0)
+    ADCON1 = 0b10001111;    // Analog=AN3, AN3=V_REF+, AN2=V_REF-
     
+    ADCON0bits.ADON = 0b1;
+    
+    TRISC = PORTC = TRISD = PORTD = 0b00000000; // Enable ports for digital output
+    
+    //ADCSelectChannel(0b000); // Select channel AN0
+    while(1) {
+        ADCRead();
+        PORTC = ADRESL;
+        PORTD = ADRESH;
+        delay();
+    }
 }
