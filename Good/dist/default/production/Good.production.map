@@ -1,27 +1,40 @@
 MPLINK 4.48, Linker
-Linker Map File - Created Wed Oct 16 19:14:38 2013
+Linker Map File - Created Sun Oct 20 19:31:03 2013
 
                                  Section Info
                   Section       Type    Address   Location Size(Bytes)
                 ---------  ---------  ---------  ---------  ---------
                _entry_scn       code   0x000000    program   0x000006
-                   .cinit    romdata   0x000006    program   0x00000e
-             .code_main.o       code   0x000014    program   0x000504
-               _cinit_scn       code   0x000518    program   0x00009e
-                     PROG       code   0x0005b6    program   0x00004c
-         .code_fxd1616u.o       code   0x000602    program   0x00002c
-                    .code       code   0x00062e    program   0x000020
-             _startup_scn       code   0x00064e    program   0x00001c
-           .code___init.o       code   0x00066a    program   0x000002
-         .romdata_c018i.o    romdata   0x00066c    program   0x000000
-          .idata_main.o_i    romdata   0x00066c    program   0x000004
-          .romdata_main.o    romdata   0x00066c    program   0x000000
-        .romdata___init.o    romdata   0x00066c    program   0x000000
-      .romdata_fxd1616u.o    romdata   0x00066c    program   0x000000
-        .idata___init.o_i    romdata   0x000670    program   0x000000
-      .idata_fxd1616u.o_i    romdata   0x000670    program   0x000000
-            .code_c018i.o       code   0x000670    program   0x000000
-         .idata_c018i.o_i    romdata   0x000670    program   0x000000
+                   .cinit    romdata   0x000006    program   0x000002
+             .code_main.o       code   0x000008    program   0x000112
+               _cinit_scn       code   0x00011a    program   0x00009e
+            .code_uopen.o       code   0x0001b8    program   0x00007a
+                     PROG       code   0x000232    program   0x00004c
+            .code_uputs.o       code   0x00027e    program   0x00004c
+           .code_uwrite.o       code   0x0002ca    program   0x00002e
+         .code_fxd1616u.o       code   0x0002f8    program   0x00002c
+                    .code       code   0x000324    program   0x000020
+             _startup_scn       code   0x000344    program   0x00001c
+             .stringtable    romdata   0x000360    program   0x000008
+           .code___init.o       code   0x000368    program   0x000002
+            .code_udefs.o       code   0x00036a    program   0x000000
+        .idata___init.o_i    romdata   0x00036a    program   0x000000
+        .romdata___init.o    romdata   0x00036a    program   0x000000
+         .idata_uputs.o_i    romdata   0x00036a    program   0x000000
+         .romdata_uputs.o    romdata   0x00036a    program   0x000000
+        .idata_uwrite.o_i    romdata   0x00036a    program   0x000000
+        .romdata_uwrite.o    romdata   0x00036a    program   0x000000
+         .romdata_udefs.o    romdata   0x00036a    program   0x000000
+         .idata_udefs.o_i    romdata   0x00036a    program   0x000000
+         .romdata_uopen.o    romdata   0x00036a    program   0x000000
+         .idata_uopen.o_i    romdata   0x00036a    program   0x000000
+      .romdata_fxd1616u.o    romdata   0x00036a    program   0x000000
+      .idata_fxd1616u.o_i    romdata   0x00036a    program   0x000000
+          .romdata_main.o    romdata   0x00036a    program   0x000000
+          .idata_main.o_i    romdata   0x00036a    program   0x000000
+            .code_c018i.o       code   0x00036a    program   0x000000
+         .romdata_c018i.o    romdata   0x00036a    program   0x000000
+         .idata_c018i.o_i    romdata   0x00036a    program   0x000000
     .config_300002_main.o    romdata   0x300002    program   0x000001
     .config_300003_main.o    romdata   0x300003    program   0x000001
     .config_300006_main.o    romdata   0x300006    program   0x000001
@@ -29,15 +42,23 @@ Linker Map File - Created Wed Oct 16 19:14:38 2013
     .config_300009_main.o    romdata   0x300009    program   0x000001
     .config_30000b_main.o    romdata   0x30000b    program   0x000001
                 MATH_DATA      udata   0x000000       data   0x000010
-                 .tmpdata      udata   0x000010       data   0x000006
+                 .tmpdata      udata   0x000010       data   0x000002
            .udata_c018i.o      udata   0x000080       data   0x00000a
-            .idata_main.o      idata   0x00008a       data   0x000004
-           .idata_c018i.o      idata   0x00008e       data   0x000000
-            .udata_main.o      udata   0x00008e       data   0x000000
-        .udata_fxd1616u.o      udata   0x00008e       data   0x000000
-        .idata_fxd1616u.o      idata   0x00008e       data   0x000000
-          .udata___init.o      udata   0x00008e       data   0x000000
-          .idata___init.o      idata   0x00008e       data   0x000000
+           .udata_udefs.o      udata   0x00008a       data   0x000001
+           .idata_udefs.o      idata   0x00008b       data   0x000000
+          .idata_uwrite.o      idata   0x00008b       data   0x000000
+          .udata_uwrite.o      udata   0x00008b       data   0x000000
+           .idata_uputs.o      idata   0x00008b       data   0x000000
+           .udata_uputs.o      udata   0x00008b       data   0x000000
+          .idata___init.o      idata   0x00008b       data   0x000000
+          .udata___init.o      udata   0x00008b       data   0x000000
+           .idata_uopen.o      idata   0x00008b       data   0x000000
+           .udata_uopen.o      udata   0x00008b       data   0x000000
+        .idata_fxd1616u.o      idata   0x00008b       data   0x000000
+        .udata_fxd1616u.o      udata   0x00008b       data   0x000000
+            .idata_main.o      idata   0x00008b       data   0x000000
+            .udata_main.o      udata   0x00008b       data   0x000000
+           .idata_c018i.o      idata   0x00008b       data   0x000000
                    .stack      udata   0x000500       data   0x000100
             SFR_UNBANKED0      udata   0x000f80       data   0x000080
 
@@ -46,56 +67,60 @@ Linker Map File - Created Wed Oct 16 19:14:38 2013
                               Program Memory Usage 
                                Start         End      
                            ---------   ---------      
-                            0x000000    0x00066f      
+                            0x000000    0x000369      
                             0x300002    0x300003      
                             0x300006    0x300006      
                             0x300008    0x300009      
                             0x30000b    0x30000b      
-            1654 out of 33048 program addresses used, program memory utilization is 5%
+            880 out of 33048 program addresses used, program memory utilization is 2%
 
 
 
                               Symbols - Sorted by Name
                      Name    Address   Location    Storage File                     
                 ---------  ---------  ---------  --------- ---------                
-                   D1616S   0x0005d8    program     static E:\c18v3.46\pic18-lt\cxx-framework\src\traditional\math\fxd1616s.asm
-                D1616SNEG   0x0005e6    program     static E:\c18v3.46\pic18-lt\cxx-framework\src\traditional\math\fxd1616s.asm
-                 D1616SOK   0x0005e2    program     static E:\c18v3.46\pic18-lt\cxx-framework\src\traditional\math\fxd1616s.asm
-                  D1616SX   0x0005f8    program     static E:\c18v3.46\pic18-lt\cxx-framework\src\traditional\math\fxd1616s.asm
-                  DA1616S   0x0005c8    program     static E:\c18v3.46\pic18-lt\cxx-framework\src\traditional\math\fxd1616s.asm
-                 FXD1616S   0x0005b6    program     extern E:\c18v3.46\pic18-lt\cxx-framework\src\traditional\math\fxd1616s.asm
-                 FXD1616U   0x000602    program     extern E:\c18v3.46\pic18-lt\cxx-framework\src\traditional\math\fxd1616u.c
-       ___return_lbl00000   0x00062c    program     static                          
+                   D1616S   0x000254    program     static E:\c18v3.46\pic18-lt\cxx-framework\src\traditional\math\fxd1616s.asm
+                D1616SNEG   0x000262    program     static E:\c18v3.46\pic18-lt\cxx-framework\src\traditional\math\fxd1616s.asm
+                 D1616SOK   0x00025e    program     static E:\c18v3.46\pic18-lt\cxx-framework\src\traditional\math\fxd1616s.asm
+                  D1616SX   0x000274    program     static E:\c18v3.46\pic18-lt\cxx-framework\src\traditional\math\fxd1616s.asm
+                  DA1616S   0x000244    program     static E:\c18v3.46\pic18-lt\cxx-framework\src\traditional\math\fxd1616s.asm
+                 FXD1616S   0x000232    program     extern E:\c18v3.46\pic18-lt\cxx-framework\src\traditional\math\fxd1616s.asm
+                 FXD1616U   0x0002f8    program     extern E:\c18v3.46\pic18-lt\cxx-framework\src\traditional\math\fxd1616u.c
+                OpenUSART   0x0001b8    program     extern E:\c18v3.46\pic18-lt\cxx-framework\src\pmc_common\USART\uopen.c
+               WriteUSART   0x0002ca    program     extern E:\c18v3.46\pic18-lt\cxx-framework\src\pmc_common\USART\uwrite.c
        ___return_lbl00000   0x000004    program     static                          
-       ___return_lbl00001   0x000668    program     static                          
-       ___return_lbl00002   0x0005b4    program     static                          
-               __config_0   0x300002    program     static C:\Users\jdema\Documents\git\lb2\Good\main.c
-               __config_1   0x300003    program     static C:\Users\jdema\Documents\git\lb2\Good\main.c
-               __config_2   0x300006    program     static C:\Users\jdema\Documents\git\lb2\Good\main.c
-               __config_3   0x300008    program     static C:\Users\jdema\Documents\git\lb2\Good\main.c
-               __config_4   0x300009    program     static C:\Users\jdema\Documents\git\lb2\Good\main.c
-               __config_5   0x30000b    program     static C:\Users\jdema\Documents\git\lb2\Good\main.c
-                   __init   0x00066a    program     extern E:\c18v3.46\pic18-lt\cxx-framework\src\traditional\stdclib\__init.c
-            __zero_memory   0x00062e    program     extern E:\c18v3.46\pic18-lt\cxx-framework\src\traditional\proc\p18f452.asm
-                _do_cinit   0x000518    program     extern E:\c18v3.46\pic18-lt\cxx-framework\src\traditional\startup\c018i.c
+       ___return_lbl00000   0x000322    program     static                          
+       ___return_lbl00001   0x00035e    program     static                          
+       ___return_lbl00002   0x0001b6    program     static                          
+               __config_0   0x300002    program     static C:\Users\jayde_000\Dropbox\UW\EE478\lab2\git\lb2\Good\main.c
+               __config_1   0x300003    program     static C:\Users\jayde_000\Dropbox\UW\EE478\lab2\git\lb2\Good\main.c
+               __config_2   0x300006    program     static C:\Users\jayde_000\Dropbox\UW\EE478\lab2\git\lb2\Good\main.c
+               __config_3   0x300008    program     static C:\Users\jayde_000\Dropbox\UW\EE478\lab2\git\lb2\Good\main.c
+               __config_4   0x300009    program     static C:\Users\jayde_000\Dropbox\UW\EE478\lab2\git\lb2\Good\main.c
+               __config_5   0x30000b    program     static C:\Users\jayde_000\Dropbox\UW\EE478\lab2\git\lb2\Good\main.c
+                   __init   0x000368    program     extern E:\c18v3.46\pic18-lt\cxx-framework\src\traditional\stdclib\__init.c
+                   __pa_0   0x00010e    program     static C:\Users\jayde_000\Dropbox\UW\EE478\lab2\git\lb2\Good\main.c
+               __string_1   0x000365    program     static C:\Users\jayde_000\Dropbox\UW\EE478\lab2\git\lb2\Good\main.c
+               __string_2   0x000360    program     static C:\Users\jayde_000\Dropbox\UW\EE478\lab2\git\lb2\Good\main.c
+            __zero_memory   0x000324    program     extern E:\c18v3.46\pic18-lt\cxx-framework\src\traditional\proc\p18f452.asm
+                _do_cinit   0x00011a    program     extern E:\c18v3.46\pic18-lt\cxx-framework\src\traditional\startup\c018i.c
                    _entry   0x000000    program     extern E:\c18v3.46\pic18-lt\cxx-framework\src\traditional\startup\c018i.c
-                 _startup   0x00064e    program     extern E:\c18v3.46\pic18-lt\cxx-framework\src\traditional\startup\c018i.c
-                compare_l   0x000644    program     static E:\c18v3.46\pic18-lt\cxx-framework\src\traditional\proc\p18f452.asm
-                copy_loop   0x00058a    program     static                          
-            copy_one_byte   0x000590    program     static                          
-                    delay   0x000014    program     extern C:\Users\jdema\Documents\git\lb2\Good\main.c
-                     done   0x0005b4    program     static                          
-             done_copying   0x00059e    program     static                          
-                  endloop   0x000628    program     static                          
-                     loop   0x00065e    program     static                          
-                     loop   0x00060c    program     static                          
-                   loop_h   0x00063c    program     static E:\c18v3.46\pic18-lt\cxx-framework\src\traditional\proc\p18f452.asm
-                   loop_l   0x000646    program     static E:\c18v3.46\pic18-lt\cxx-framework\src\traditional\proc\p18f452.asm
-                     main   0x000476    program     extern C:\Users\jdema\Documents\git\lb2\Good\main.c
-                 readSRAM   0x00024c    program     extern C:\Users\jdema\Documents\git\lb2\Good\main.c
-                     test   0x000532    program     static                          
-                writeSRAM   0x00005a    program     extern C:\Users\jdema\Documents\git\lb2\Good\main.c
-               zero_block   0x00063c    program     static E:\c18v3.46\pic18-lt\cxx-framework\src\traditional\proc\p18f452.asm
+                 _startup   0x000344    program     extern E:\c18v3.46\pic18-lt\cxx-framework\src\traditional\startup\c018i.c
+                compare_l   0x00033a    program     static E:\c18v3.46\pic18-lt\cxx-framework\src\traditional\proc\p18f452.asm
+                copy_loop   0x00018c    program     static                          
+            copy_one_byte   0x000192    program     static                          
+                    delay   0x000008    program     extern C:\Users\jayde_000\Dropbox\UW\EE478\lab2\git\lb2\Good\main.c
+                     done   0x0001b6    program     static                          
+             done_copying   0x0001a0    program     static                          
+                  endloop   0x00031e    program     static                          
+                     loop   0x000354    program     static                          
+                     loop   0x000302    program     static                          
+                   loop_h   0x000332    program     static E:\c18v3.46\pic18-lt\cxx-framework\src\traditional\proc\p18f452.asm
+                   loop_l   0x00033c    program     static E:\c18v3.46\pic18-lt\cxx-framework\src\traditional\proc\p18f452.asm
+                     main   0x00004e    program     extern C:\Users\jayde_000\Dropbox\UW\EE478\lab2\git\lb2\Good\main.c
+                putsUSART   0x00027e    program     extern E:\c18v3.46\pic18-lt\cxx-framework\src\pmc_common\USART\uputs.c
+                     test   0x000134    program     static                          
+               zero_block   0x000332    program     static E:\c18v3.46\pic18-lt\cxx-framework\src\traditional\proc\p18f452.asm
                    ADCON0   0x000fc2       data     extern E:\c18v3.46\pic18-lt\cxx-framework\src\traditional\proc\p18f452.asm
                ADCON0bits   0x000fc2       data     extern E:\c18v3.46\pic18-lt\cxx-framework\src\traditional\proc\p18f452.asm
                    ADCON1   0x000fc1       data     extern E:\c18v3.46\pic18-lt\cxx-framework\src\traditional\proc\p18f452.asm
@@ -212,7 +237,6 @@ Linker Map File - Created Wed Oct 16 19:14:38 2013
                 RCSTAbits   0x000fab       data     extern E:\c18v3.46\pic18-lt\cxx-framework\src\traditional\proc\p18f452.asm
                      SIGN   0x000000       data     extern E:\c18v3.46\pic18-lt\cxx-framework\src\traditional\math\cmath18.asm
                     SPBRG   0x000faf       data     extern E:\c18v3.46\pic18-lt\cxx-framework\src\traditional\proc\p18f452.asm
-          SRAMAddressPtrs   0x00008a       data     extern C:\Users\jdema\Documents\git\lb2\Good\main.c
                    SSPADD   0x000fc8       data     extern E:\c18v3.46\pic18-lt\cxx-framework\src\traditional\proc\p18f452.asm
                    SSPBUF   0x000fc9       data     extern E:\c18v3.46\pic18-lt\cxx-framework\src\traditional\proc\p18f452.asm
                   SSPCON1   0x000fc6       data     extern E:\c18v3.46\pic18-lt\cxx-framework\src\traditional\proc\p18f452.asm
@@ -262,6 +286,7 @@ Linker Map File - Created Wed Oct 16 19:14:38 2013
                     TXREG   0x000fad       data     extern E:\c18v3.46\pic18-lt\cxx-framework\src\traditional\proc\p18f452.asm
                     TXSTA   0x000fac       data     extern E:\c18v3.46\pic18-lt\cxx-framework\src\traditional\proc\p18f452.asm
                 TXSTAbits   0x000fac       data     extern E:\c18v3.46\pic18-lt\cxx-framework\src\traditional\proc\p18f452.asm
+             USART_Status   0x00008a       data     extern E:\c18v3.46\pic18-lt\cxx-framework\src\pmc_common\USART\udefs.c
                         W   0x000fe8       data     extern E:\c18v3.46\pic18-lt\cxx-framework\src\traditional\proc\p18f452.asm
                    WDTCON   0x000fd1       data     extern E:\c18v3.46\pic18-lt\cxx-framework\src\traditional\proc\p18f452.asm
                WDTCONbits   0x000fd1       data     extern E:\c18v3.46\pic18-lt\cxx-framework\src\traditional\proc\p18f452.asm
@@ -286,7 +311,7 @@ Linker Map File - Created Wed Oct 16 19:14:38 2013
                   __REMB1   0x000004       data     extern E:\c18v3.46\pic18-lt\cxx-framework\src\traditional\math\aarg.asm
                   __REMB2   0x000003       data     extern E:\c18v3.46\pic18-lt\cxx-framework\src\traditional\math\aarg.asm
                   __REMB3   0x000002       data     extern E:\c18v3.46\pic18-lt\cxx-framework\src\traditional\math\aarg.asm
-                  __tmp_0   0x000010       data     static C:\Users\jdema\Documents\git\lb2\Good\main.c
+                  __tmp_0   0x000010       data     static C:\Users\jayde_000\Dropbox\UW\EE478\lab2\git\lb2\Good\main.c
                 curr_byte   0x000083       data     static E:\c18v3.46\pic18-lt\cxx-framework\src\traditional\startup\c018i.c
                curr_entry   0x000085       data     static E:\c18v3.46\pic18-lt\cxx-framework\src\traditional\startup\c018i.c
                  data_ptr   0x000087       data     static E:\c18v3.46\pic18-lt\cxx-framework\src\traditional\startup\c018i.c
@@ -299,42 +324,46 @@ Linker Map File - Created Wed Oct 16 19:14:38 2013
                 ---------  ---------  ---------  --------- ---------                
                    _entry   0x000000    program     extern E:\c18v3.46\pic18-lt\cxx-framework\src\traditional\startup\c018i.c
        ___return_lbl00000   0x000004    program     static                          
-                    delay   0x000014    program     extern C:\Users\jdema\Documents\git\lb2\Good\main.c
-                writeSRAM   0x00005a    program     extern C:\Users\jdema\Documents\git\lb2\Good\main.c
-                 readSRAM   0x00024c    program     extern C:\Users\jdema\Documents\git\lb2\Good\main.c
-                     main   0x000476    program     extern C:\Users\jdema\Documents\git\lb2\Good\main.c
-                _do_cinit   0x000518    program     extern E:\c18v3.46\pic18-lt\cxx-framework\src\traditional\startup\c018i.c
-                     test   0x000532    program     static                          
-                copy_loop   0x00058a    program     static                          
-            copy_one_byte   0x000590    program     static                          
-             done_copying   0x00059e    program     static                          
-                     done   0x0005b4    program     static                          
-       ___return_lbl00002   0x0005b4    program     static                          
-                 FXD1616S   0x0005b6    program     extern E:\c18v3.46\pic18-lt\cxx-framework\src\traditional\math\fxd1616s.asm
-                  DA1616S   0x0005c8    program     static E:\c18v3.46\pic18-lt\cxx-framework\src\traditional\math\fxd1616s.asm
-                   D1616S   0x0005d8    program     static E:\c18v3.46\pic18-lt\cxx-framework\src\traditional\math\fxd1616s.asm
-                 D1616SOK   0x0005e2    program     static E:\c18v3.46\pic18-lt\cxx-framework\src\traditional\math\fxd1616s.asm
-                D1616SNEG   0x0005e6    program     static E:\c18v3.46\pic18-lt\cxx-framework\src\traditional\math\fxd1616s.asm
-                  D1616SX   0x0005f8    program     static E:\c18v3.46\pic18-lt\cxx-framework\src\traditional\math\fxd1616s.asm
-                 FXD1616U   0x000602    program     extern E:\c18v3.46\pic18-lt\cxx-framework\src\traditional\math\fxd1616u.c
-                     loop   0x00060c    program     static                          
-                  endloop   0x000628    program     static                          
-       ___return_lbl00000   0x00062c    program     static                          
-            __zero_memory   0x00062e    program     extern E:\c18v3.46\pic18-lt\cxx-framework\src\traditional\proc\p18f452.asm
-               zero_block   0x00063c    program     static E:\c18v3.46\pic18-lt\cxx-framework\src\traditional\proc\p18f452.asm
-                   loop_h   0x00063c    program     static E:\c18v3.46\pic18-lt\cxx-framework\src\traditional\proc\p18f452.asm
-                compare_l   0x000644    program     static E:\c18v3.46\pic18-lt\cxx-framework\src\traditional\proc\p18f452.asm
-                   loop_l   0x000646    program     static E:\c18v3.46\pic18-lt\cxx-framework\src\traditional\proc\p18f452.asm
-                 _startup   0x00064e    program     extern E:\c18v3.46\pic18-lt\cxx-framework\src\traditional\startup\c018i.c
-                     loop   0x00065e    program     static                          
-       ___return_lbl00001   0x000668    program     static                          
-                   __init   0x00066a    program     extern E:\c18v3.46\pic18-lt\cxx-framework\src\traditional\stdclib\__init.c
-               __config_0   0x300002    program     static C:\Users\jdema\Documents\git\lb2\Good\main.c
-               __config_1   0x300003    program     static C:\Users\jdema\Documents\git\lb2\Good\main.c
-               __config_2   0x300006    program     static C:\Users\jdema\Documents\git\lb2\Good\main.c
-               __config_3   0x300008    program     static C:\Users\jdema\Documents\git\lb2\Good\main.c
-               __config_4   0x300009    program     static C:\Users\jdema\Documents\git\lb2\Good\main.c
-               __config_5   0x30000b    program     static C:\Users\jdema\Documents\git\lb2\Good\main.c
+                    delay   0x000008    program     extern C:\Users\jayde_000\Dropbox\UW\EE478\lab2\git\lb2\Good\main.c
+                     main   0x00004e    program     extern C:\Users\jayde_000\Dropbox\UW\EE478\lab2\git\lb2\Good\main.c
+                   __pa_0   0x00010e    program     static C:\Users\jayde_000\Dropbox\UW\EE478\lab2\git\lb2\Good\main.c
+                _do_cinit   0x00011a    program     extern E:\c18v3.46\pic18-lt\cxx-framework\src\traditional\startup\c018i.c
+                     test   0x000134    program     static                          
+                copy_loop   0x00018c    program     static                          
+            copy_one_byte   0x000192    program     static                          
+             done_copying   0x0001a0    program     static                          
+                     done   0x0001b6    program     static                          
+       ___return_lbl00002   0x0001b6    program     static                          
+                OpenUSART   0x0001b8    program     extern E:\c18v3.46\pic18-lt\cxx-framework\src\pmc_common\USART\uopen.c
+                 FXD1616S   0x000232    program     extern E:\c18v3.46\pic18-lt\cxx-framework\src\traditional\math\fxd1616s.asm
+                  DA1616S   0x000244    program     static E:\c18v3.46\pic18-lt\cxx-framework\src\traditional\math\fxd1616s.asm
+                   D1616S   0x000254    program     static E:\c18v3.46\pic18-lt\cxx-framework\src\traditional\math\fxd1616s.asm
+                 D1616SOK   0x00025e    program     static E:\c18v3.46\pic18-lt\cxx-framework\src\traditional\math\fxd1616s.asm
+                D1616SNEG   0x000262    program     static E:\c18v3.46\pic18-lt\cxx-framework\src\traditional\math\fxd1616s.asm
+                  D1616SX   0x000274    program     static E:\c18v3.46\pic18-lt\cxx-framework\src\traditional\math\fxd1616s.asm
+                putsUSART   0x00027e    program     extern E:\c18v3.46\pic18-lt\cxx-framework\src\pmc_common\USART\uputs.c
+               WriteUSART   0x0002ca    program     extern E:\c18v3.46\pic18-lt\cxx-framework\src\pmc_common\USART\uwrite.c
+                 FXD1616U   0x0002f8    program     extern E:\c18v3.46\pic18-lt\cxx-framework\src\traditional\math\fxd1616u.c
+                     loop   0x000302    program     static                          
+                  endloop   0x00031e    program     static                          
+       ___return_lbl00000   0x000322    program     static                          
+            __zero_memory   0x000324    program     extern E:\c18v3.46\pic18-lt\cxx-framework\src\traditional\proc\p18f452.asm
+                   loop_h   0x000332    program     static E:\c18v3.46\pic18-lt\cxx-framework\src\traditional\proc\p18f452.asm
+               zero_block   0x000332    program     static E:\c18v3.46\pic18-lt\cxx-framework\src\traditional\proc\p18f452.asm
+                compare_l   0x00033a    program     static E:\c18v3.46\pic18-lt\cxx-framework\src\traditional\proc\p18f452.asm
+                   loop_l   0x00033c    program     static E:\c18v3.46\pic18-lt\cxx-framework\src\traditional\proc\p18f452.asm
+                 _startup   0x000344    program     extern E:\c18v3.46\pic18-lt\cxx-framework\src\traditional\startup\c018i.c
+                     loop   0x000354    program     static                          
+       ___return_lbl00001   0x00035e    program     static                          
+               __string_2   0x000360    program     static C:\Users\jayde_000\Dropbox\UW\EE478\lab2\git\lb2\Good\main.c
+               __string_1   0x000365    program     static C:\Users\jayde_000\Dropbox\UW\EE478\lab2\git\lb2\Good\main.c
+                   __init   0x000368    program     extern E:\c18v3.46\pic18-lt\cxx-framework\src\traditional\stdclib\__init.c
+               __config_0   0x300002    program     static C:\Users\jayde_000\Dropbox\UW\EE478\lab2\git\lb2\Good\main.c
+               __config_1   0x300003    program     static C:\Users\jayde_000\Dropbox\UW\EE478\lab2\git\lb2\Good\main.c
+               __config_2   0x300006    program     static C:\Users\jayde_000\Dropbox\UW\EE478\lab2\git\lb2\Good\main.c
+               __config_3   0x300008    program     static C:\Users\jayde_000\Dropbox\UW\EE478\lab2\git\lb2\Good\main.c
+               __config_4   0x300009    program     static C:\Users\jayde_000\Dropbox\UW\EE478\lab2\git\lb2\Good\main.c
+               __config_5   0x30000b    program     static C:\Users\jayde_000\Dropbox\UW\EE478\lab2\git\lb2\Good\main.c
                      SIGN   0x000000       data     extern E:\c18v3.46\pic18-lt\cxx-framework\src\traditional\math\cmath18.asm
             __FPFLAGSbits   0x000001       data     extern E:\c18v3.46\pic18-lt\cxx-framework\src\traditional\math\cmath18.asm
                 __FPFLAGS   0x000001       data     extern E:\c18v3.46\pic18-lt\cxx-framework\src\traditional\math\cmath18.asm
@@ -356,12 +385,12 @@ Linker Map File - Created Wed Oct 16 19:14:38 2013
                  __BARGB1   0x00000d       data     extern E:\c18v3.46\pic18-lt\cxx-framework\src\traditional\math\barg.asm
                  __BARGB0   0x00000e       data     extern E:\c18v3.46\pic18-lt\cxx-framework\src\traditional\math\barg.asm
                    __BEXP   0x00000f       data     extern E:\c18v3.46\pic18-lt\cxx-framework\src\traditional\math\barg.asm
-                  __tmp_0   0x000010       data     static C:\Users\jdema\Documents\git\lb2\Good\main.c
+                  __tmp_0   0x000010       data     static C:\Users\jayde_000\Dropbox\UW\EE478\lab2\git\lb2\Good\main.c
                      prom   0x000080       data     static E:\c18v3.46\pic18-lt\cxx-framework\src\traditional\startup\c018i.c
                 curr_byte   0x000083       data     static E:\c18v3.46\pic18-lt\cxx-framework\src\traditional\startup\c018i.c
                curr_entry   0x000085       data     static E:\c18v3.46\pic18-lt\cxx-framework\src\traditional\startup\c018i.c
                  data_ptr   0x000087       data     static E:\c18v3.46\pic18-lt\cxx-framework\src\traditional\startup\c018i.c
-          SRAMAddressPtrs   0x00008a       data     extern C:\Users\jdema\Documents\git\lb2\Good\main.c
+             USART_Status   0x00008a       data     extern E:\c18v3.46\pic18-lt\cxx-framework\src\pmc_common\USART\udefs.c
                     PORTA   0x000f80       data     extern E:\c18v3.46\pic18-lt\cxx-framework\src\traditional\proc\p18f452.asm
                 PORTAbits   0x000f80       data     extern E:\c18v3.46\pic18-lt\cxx-framework\src\traditional\proc\p18f452.asm
                 PORTBbits   0x000f81       data     extern E:\c18v3.46\pic18-lt\cxx-framework\src\traditional\proc\p18f452.asm
@@ -374,8 +403,8 @@ Linker Map File - Created Wed Oct 16 19:14:38 2013
                 PORTEbits   0x000f84       data     extern E:\c18v3.46\pic18-lt\cxx-framework\src\traditional\proc\p18f452.asm
                  LATAbits   0x000f89       data     extern E:\c18v3.46\pic18-lt\cxx-framework\src\traditional\proc\p18f452.asm
                      LATA   0x000f89       data     extern E:\c18v3.46\pic18-lt\cxx-framework\src\traditional\proc\p18f452.asm
-                 LATBbits   0x000f8a       data     extern E:\c18v3.46\pic18-lt\cxx-framework\src\traditional\proc\p18f452.asm
                      LATB   0x000f8a       data     extern E:\c18v3.46\pic18-lt\cxx-framework\src\traditional\proc\p18f452.asm
+                 LATBbits   0x000f8a       data     extern E:\c18v3.46\pic18-lt\cxx-framework\src\traditional\proc\p18f452.asm
                      LATC   0x000f8b       data     extern E:\c18v3.46\pic18-lt\cxx-framework\src\traditional\proc\p18f452.asm
                  LATCbits   0x000f8b       data     extern E:\c18v3.46\pic18-lt\cxx-framework\src\traditional\proc\p18f452.asm
                      LATD   0x000f8c       data     extern E:\c18v3.46\pic18-lt\cxx-framework\src\traditional\proc\p18f452.asm
@@ -383,9 +412,9 @@ Linker Map File - Created Wed Oct 16 19:14:38 2013
                      LATE   0x000f8d       data     extern E:\c18v3.46\pic18-lt\cxx-framework\src\traditional\proc\p18f452.asm
                  LATEbits   0x000f8d       data     extern E:\c18v3.46\pic18-lt\cxx-framework\src\traditional\proc\p18f452.asm
                      DDRA   0x000f92       data     extern E:\c18v3.46\pic18-lt\cxx-framework\src\traditional\proc\p18f452.asm
-                    TRISA   0x000f92       data     extern E:\c18v3.46\pic18-lt\cxx-framework\src\traditional\proc\p18f452.asm
-                 DDRAbits   0x000f92       data     extern E:\c18v3.46\pic18-lt\cxx-framework\src\traditional\proc\p18f452.asm
                 TRISAbits   0x000f92       data     extern E:\c18v3.46\pic18-lt\cxx-framework\src\traditional\proc\p18f452.asm
+                 DDRAbits   0x000f92       data     extern E:\c18v3.46\pic18-lt\cxx-framework\src\traditional\proc\p18f452.asm
+                    TRISA   0x000f92       data     extern E:\c18v3.46\pic18-lt\cxx-framework\src\traditional\proc\p18f452.asm
                      DDRB   0x000f93       data     extern E:\c18v3.46\pic18-lt\cxx-framework\src\traditional\proc\p18f452.asm
                  DDRBbits   0x000f93       data     extern E:\c18v3.46\pic18-lt\cxx-framework\src\traditional\proc\p18f452.asm
                 TRISBbits   0x000f93       data     extern E:\c18v3.46\pic18-lt\cxx-framework\src\traditional\proc\p18f452.asm
@@ -400,8 +429,8 @@ Linker Map File - Created Wed Oct 16 19:14:38 2013
                 TRISDbits   0x000f95       data     extern E:\c18v3.46\pic18-lt\cxx-framework\src\traditional\proc\p18f452.asm
                  DDREbits   0x000f96       data     extern E:\c18v3.46\pic18-lt\cxx-framework\src\traditional\proc\p18f452.asm
                      DDRE   0x000f96       data     extern E:\c18v3.46\pic18-lt\cxx-framework\src\traditional\proc\p18f452.asm
-                TRISEbits   0x000f96       data     extern E:\c18v3.46\pic18-lt\cxx-framework\src\traditional\proc\p18f452.asm
                     TRISE   0x000f96       data     extern E:\c18v3.46\pic18-lt\cxx-framework\src\traditional\proc\p18f452.asm
+                TRISEbits   0x000f96       data     extern E:\c18v3.46\pic18-lt\cxx-framework\src\traditional\proc\p18f452.asm
                      PIE1   0x000f9d       data     extern E:\c18v3.46\pic18-lt\cxx-framework\src\traditional\proc\p18f452.asm
                  PIE1bits   0x000f9d       data     extern E:\c18v3.46\pic18-lt\cxx-framework\src\traditional\proc\p18f452.asm
                      PIR1   0x000f9e       data     extern E:\c18v3.46\pic18-lt\cxx-framework\src\traditional\proc\p18f452.asm
@@ -444,8 +473,8 @@ Linker Map File - Created Wed Oct 16 19:14:38 2013
                    ADCON1   0x000fc1       data     extern E:\c18v3.46\pic18-lt\cxx-framework\src\traditional\proc\p18f452.asm
                    ADCON0   0x000fc2       data     extern E:\c18v3.46\pic18-lt\cxx-framework\src\traditional\proc\p18f452.asm
                ADCON0bits   0x000fc2       data     extern E:\c18v3.46\pic18-lt\cxx-framework\src\traditional\proc\p18f452.asm
-                   ADRESL   0x000fc3       data     extern E:\c18v3.46\pic18-lt\cxx-framework\src\traditional\proc\p18f452.asm
                     ADRES   0x000fc3       data     extern E:\c18v3.46\pic18-lt\cxx-framework\src\traditional\proc\p18f452.asm
+                   ADRESL   0x000fc3       data     extern E:\c18v3.46\pic18-lt\cxx-framework\src\traditional\proc\p18f452.asm
                    ADRESH   0x000fc4       data     extern E:\c18v3.46\pic18-lt\cxx-framework\src\traditional\proc\p18f452.asm
                   SSPCON2   0x000fc5       data     extern E:\c18v3.46\pic18-lt\cxx-framework\src\traditional\proc\p18f452.asm
               SSPCON2bits   0x000fc5       data     extern E:\c18v3.46\pic18-lt\cxx-framework\src\traditional\proc\p18f452.asm
@@ -459,26 +488,26 @@ Linker Map File - Created Wed Oct 16 19:14:38 2013
                     T2CON   0x000fca       data     extern E:\c18v3.46\pic18-lt\cxx-framework\src\traditional\proc\p18f452.asm
                       PR2   0x000fcb       data     extern E:\c18v3.46\pic18-lt\cxx-framework\src\traditional\proc\p18f452.asm
                      TMR2   0x000fcc       data     extern E:\c18v3.46\pic18-lt\cxx-framework\src\traditional\proc\p18f452.asm
-                    T1CON   0x000fcd       data     extern E:\c18v3.46\pic18-lt\cxx-framework\src\traditional\proc\p18f452.asm
                 T1CONbits   0x000fcd       data     extern E:\c18v3.46\pic18-lt\cxx-framework\src\traditional\proc\p18f452.asm
+                    T1CON   0x000fcd       data     extern E:\c18v3.46\pic18-lt\cxx-framework\src\traditional\proc\p18f452.asm
                     TMR1L   0x000fce       data     extern E:\c18v3.46\pic18-lt\cxx-framework\src\traditional\proc\p18f452.asm
                     TMR1H   0x000fcf       data     extern E:\c18v3.46\pic18-lt\cxx-framework\src\traditional\proc\p18f452.asm
-                 RCONbits   0x000fd0       data     extern E:\c18v3.46\pic18-lt\cxx-framework\src\traditional\proc\p18f452.asm
                      RCON   0x000fd0       data     extern E:\c18v3.46\pic18-lt\cxx-framework\src\traditional\proc\p18f452.asm
-               WDTCONbits   0x000fd1       data     extern E:\c18v3.46\pic18-lt\cxx-framework\src\traditional\proc\p18f452.asm
+                 RCONbits   0x000fd0       data     extern E:\c18v3.46\pic18-lt\cxx-framework\src\traditional\proc\p18f452.asm
                    WDTCON   0x000fd1       data     extern E:\c18v3.46\pic18-lt\cxx-framework\src\traditional\proc\p18f452.asm
+               WDTCONbits   0x000fd1       data     extern E:\c18v3.46\pic18-lt\cxx-framework\src\traditional\proc\p18f452.asm
                LVDCONbits   0x000fd2       data     extern E:\c18v3.46\pic18-lt\cxx-framework\src\traditional\proc\p18f452.asm
                    LVDCON   0x000fd2       data     extern E:\c18v3.46\pic18-lt\cxx-framework\src\traditional\proc\p18f452.asm
                OSCCONbits   0x000fd3       data     extern E:\c18v3.46\pic18-lt\cxx-framework\src\traditional\proc\p18f452.asm
                    OSCCON   0x000fd3       data     extern E:\c18v3.46\pic18-lt\cxx-framework\src\traditional\proc\p18f452.asm
-                T0CONbits   0x000fd5       data     extern E:\c18v3.46\pic18-lt\cxx-framework\src\traditional\proc\p18f452.asm
                     T0CON   0x000fd5       data     extern E:\c18v3.46\pic18-lt\cxx-framework\src\traditional\proc\p18f452.asm
+                T0CONbits   0x000fd5       data     extern E:\c18v3.46\pic18-lt\cxx-framework\src\traditional\proc\p18f452.asm
                     TMR0L   0x000fd6       data     extern E:\c18v3.46\pic18-lt\cxx-framework\src\traditional\proc\p18f452.asm
                     TMR0H   0x000fd7       data     extern E:\c18v3.46\pic18-lt\cxx-framework\src\traditional\proc\p18f452.asm
                STATUSbits   0x000fd8       data     extern E:\c18v3.46\pic18-lt\cxx-framework\src\traditional\proc\p18f452.asm
                    STATUS   0x000fd8       data     extern E:\c18v3.46\pic18-lt\cxx-framework\src\traditional\proc\p18f452.asm
-                    FSR2L   0x000fd9       data     extern E:\c18v3.46\pic18-lt\cxx-framework\src\traditional\proc\p18f452.asm
                      FSR2   0x000fd9       data     extern E:\c18v3.46\pic18-lt\cxx-framework\src\traditional\proc\p18f452.asm
+                    FSR2L   0x000fd9       data     extern E:\c18v3.46\pic18-lt\cxx-framework\src\traditional\proc\p18f452.asm
                     FSR2H   0x000fda       data     extern E:\c18v3.46\pic18-lt\cxx-framework\src\traditional\proc\p18f452.asm
                    PLUSW2   0x000fdb       data     extern E:\c18v3.46\pic18-lt\cxx-framework\src\traditional\proc\p18f452.asm
                   PREINC2   0x000fdc       data     extern E:\c18v3.46\pic18-lt\cxx-framework\src\traditional\proc\p18f452.asm
@@ -496,8 +525,8 @@ Linker Map File - Created Wed Oct 16 19:14:38 2013
                     INDF1   0x000fe7       data     extern E:\c18v3.46\pic18-lt\cxx-framework\src\traditional\proc\p18f452.asm
                      WREG   0x000fe8       data     extern E:\c18v3.46\pic18-lt\cxx-framework\src\traditional\proc\p18f452.asm
                         W   0x000fe8       data     extern E:\c18v3.46\pic18-lt\cxx-framework\src\traditional\proc\p18f452.asm
-                    FSR0L   0x000fe9       data     extern E:\c18v3.46\pic18-lt\cxx-framework\src\traditional\proc\p18f452.asm
                      FSR0   0x000fe9       data     extern E:\c18v3.46\pic18-lt\cxx-framework\src\traditional\proc\p18f452.asm
+                    FSR0L   0x000fe9       data     extern E:\c18v3.46\pic18-lt\cxx-framework\src\traditional\proc\p18f452.asm
                     FSR0H   0x000fea       data     extern E:\c18v3.46\pic18-lt\cxx-framework\src\traditional\proc\p18f452.asm
                    PLUSW0   0x000feb       data     extern E:\c18v3.46\pic18-lt\cxx-framework\src\traditional\proc\p18f452.asm
                   PREINC0   0x000fec       data     extern E:\c18v3.46\pic18-lt\cxx-framework\src\traditional\proc\p18f452.asm
@@ -512,8 +541,8 @@ Linker Map File - Created Wed Oct 16 19:14:38 2013
               INTCON1bits   0x000ff2       data     extern E:\c18v3.46\pic18-lt\cxx-framework\src\traditional\proc\p18f452.asm
                   INTCON1   0x000ff2       data     extern E:\c18v3.46\pic18-lt\cxx-framework\src\traditional\proc\p18f452.asm
                    INTCON   0x000ff2       data     extern E:\c18v3.46\pic18-lt\cxx-framework\src\traditional\proc\p18f452.asm
-                     PROD   0x000ff3       data     extern E:\c18v3.46\pic18-lt\cxx-framework\src\traditional\proc\p18f452.asm
                     PRODL   0x000ff3       data     extern E:\c18v3.46\pic18-lt\cxx-framework\src\traditional\proc\p18f452.asm
+                     PROD   0x000ff3       data     extern E:\c18v3.46\pic18-lt\cxx-framework\src\traditional\proc\p18f452.asm
                     PRODH   0x000ff4       data     extern E:\c18v3.46\pic18-lt\cxx-framework\src\traditional\proc\p18f452.asm
                    TABLAT   0x000ff5       data     extern E:\c18v3.46\pic18-lt\cxx-framework\src\traditional\proc\p18f452.asm
                   TBLPTRL   0x000ff6       data     extern E:\c18v3.46\pic18-lt\cxx-framework\src\traditional\proc\p18f452.asm
