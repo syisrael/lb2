@@ -1,25 +1,43 @@
-#define     measureOn	RE1 //change if necessary digital I/O for power controller initialzed as output
-#define 	window		RE2 
+/* Compile options:  -ml (Large code model) */
+//#include <p18f452.h>
+//#include <p18f25k22.h>
+#include <p18f452.h>
 
-#define 	bit0		RC0
-#define 	bit1		RC1
-#define 	bit2		RC2
-#define 	bit3		RC3
+//  turn off the watch dog timer
+#pragma config WDT=OFF              // Watchdog off
+#pragma config BOR=OFF              // Brown out reset
+#pragma config LVP=OFF               //
+#pragma config CP0=OFF              // Code protection
+#pragma config CP1=OFF              // Code protection
+#pragma config CP2=OFF              // Code protection
+#pragma config CP3=OFF              // Code protection
+#pragma config CPB=OFF              // Boot
+#pragma config WRTC=OFF             // Configuration Register Write Protection
+#pragma config PWRT=OFF              // Power up timer off
 
-#define 	bit4		RC4
-#define 	bit5		RC5
-#define 	bit6		RC6
-#define 	bit7		RC7
 
-#define 	bit8		RC8
-#define 	bit9		RC9
-#define 	bit10		RC10
-#define 	bit11		RC11			  			
+#define     measureOn	PORTCbits.RD4 //change if necessary digital I/O for power controller initialzed as output
+#define 	window		PORTCbits.RD5 
 
-extern unsigned int SRAMWriteValue;
-extern bool sSRAMWrite;
-extern unsigned short ADCON0, ADON, GODONE, ADRES;
-extern unsigned int INTCON;
+#define 	bit0		PORTCbits.RC0
+#define 	bit1		PORTCbits.RC1
+#define 	bit2		PORTCbits.RC2
+#define 	bit3		PORTCbits.RC3
+
+#define 	bit4		PORTCbits.RC4
+#define 	bit5		PORTCbits.RC5
+#define 	bit6		PORTCbits.RC6
+#define 	bit7		PORTCbits.RC7
+
+#define 	bit8		PORTCbits.RD0
+#define 	bit9		PORTCbits.RD1
+#define 	bit10		PORTCbits.RD2
+#define 	bit11		PORTCbits.RD3			  			
+
+//extern unsigned int SRAMWriteValue;
+//extern bool sSRAMWrite;
+
+void delay(int i, int k);
 
 void delay(int i, int k)
 {
@@ -32,7 +50,9 @@ void delay(int i, int k)
 
 void measureCarbon()
 {
-	int b = 0;
+	unsigned short channel;
+	unsigned int SRAMWriteValue;
+	bool sSRAMWrite;
 	// send power on to measure circuit
 	measureOn = 1;
 
@@ -56,7 +76,8 @@ void measureFlowRate()
 {
 	unsigned int count;
 	unsigned int b; 
-
+	unsigned int SRAMWriteValue;
+	bool sSRAMWrite;
 	// send power on to measure circuit
 	measureOn = 1;
 
@@ -106,9 +127,9 @@ void measureFlowRate()
 
 void measureSalinity()
 {
-	unsigned char high, low;
 	unsigned short channel;
-	int b = 0;
+	unsigned int SRAMWriteValue;
+	bool sSRAMWrite;
 	// send power on to measure circuit
 	measureOn = 1;
 
@@ -129,6 +150,9 @@ void measureSalinity()
 
 void measureTemperature()
 {
+	unsigned short channel;
+	unsigned int SRAMWriteValue;
+	bool sSRAMWrite;
 	// send power on to measure circuit
 	measureOn = 1;
 
@@ -161,4 +185,16 @@ void ADCRead(unsigned char channel)
 	return writeValue
 }
 
+void main() {
+    short i = 0, b = 0;
+    TRISC = PORTC = TRISD = PORTD = 0x0; // Enable ports for digital output
 
+    /*for (i = 0; i < 16; i++) {
+        writeSRAM(0, i);
+    }*/
+    
+    while(1) {
+        for (i = 0; i < 16; writeSRAM(0, i++));
+        for (i = 0; i < 16; readSRAM(0, i++));
+    }
+}
