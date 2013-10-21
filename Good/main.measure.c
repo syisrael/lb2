@@ -16,8 +16,8 @@
 #pragma config PWRT=OFF              // Power up timer off
 
 
-#define     measureOn	PORTCbits.RD4 //change if necessary digital I/O for power controller initialzed as output
-#define 	window		PORTCbits.RD5 
+#define     measureOn           PORTDbits.RD4 //change if necessary digital I/O for power controller initialzed as output
+#define 	window		PORTDbits.RD5
 
 #define 	bit0		PORTCbits.RC0
 #define 	bit1		PORTCbits.RC1
@@ -29,15 +29,24 @@
 #define 	bit6		PORTCbits.RC6
 #define 	bit7		PORTCbits.RC7
 
-#define 	bit8		PORTCbits.RD0
-#define 	bit9		PORTCbits.RD1
-#define 	bit10		PORTCbits.RD2
-#define 	bit11		PORTCbits.RD3			  			
+#define 	bit8		PORTDbits.RD0
+#define 	bit9		PORTDbits.RD1
+#define 	bit10		PORTDbits.RD2
+#define 	bit11		PORTDbits.RD3
+
+#define         rst             PORTDbits.RD6
+
+//typedef enum { false=0, true=1 } boo;
 
 //extern unsigned int SRAMWriteValue;
 //extern bool sSRAMWrite;
 
 void delay(int i, int k);
+short ADCRead(unsigned char channel);
+void measureTemperature();
+void measureCarbon();
+void measureSalinity();
+void measureFlowRate();
 
 void delay(int i, int k)
 {
@@ -52,7 +61,6 @@ void measureCarbon()
 {
 	unsigned short channel;
 	unsigned int SRAMWriteValue;
-	bool sSRAMWrite;
 	// send power on to measure circuit
 	measureOn = 1;
 
@@ -66,70 +74,65 @@ void measureCarbon()
 
 	// power off measureing circuit
 	measureOn = 0;
-
-	//write to SRAM 
-	sSRAMWrite = true; 
-
 }
 
 void measureFlowRate()
 {
 	unsigned int count;
-	unsigned int b; 
+        unsigned int b;
 	unsigned int SRAMWriteValue;
-	bool sSRAMWrite;
 	// send power on to measure circuit
 	measureOn = 1;
-
+        count =
 	//turn on window
-	window = 1
+	window = 1;
 
 	//wait to perform measurement for ~400ms
-	delay(0x9c40,0xc8);
+        for(b = 0; b < 0xAFFF; b++){
+            delay(0xFFFF, 0xFFFF);
 
+        }
 	//turn off window
 	window = 0;
 
 	// grab count
 	count = bit11;
 	count <<= 1;
-	count = bit10;
+	count |= bit10;
 	count <<= 1;
-	count = bit9;
+	count |= bit9;
 	count <<= 1;
-	count = bit8;
+	count |= bit8;
 	count <<= 1;
-	count = bit7;
+	count |= bit7;
 	count <<= 1;
-	count = bit6;
+	count |= bit6;
 	count <<= 1;
-	count = bit5;
+	count |= bit5;
 	count <<= 1;
-	count = bit4;
+	count |= bit4;
 	count <<= 1;
-	count = bit3;
+	count |= bit3;
 	count <<= 1;
-	count = bit2;
+	count |= bit2;
 	count <<= 1;
-	count = bit1;
+	count |= bit1;
 	count <<= 1;
-	count = bit0;
+	count |= bit0;
 
 	// power off measuring circuit
+        rst = 1;
+        rst = 0;
 	measureOn = 0;
 
 	//Grab output
 	SRAMWriteValue = count;
-
-	//write to SRAM 
-	sSRAMWrite = true;
 }
 
 void measureSalinity()
 {
 	unsigned short channel;
 	unsigned int SRAMWriteValue;
-	bool sSRAMWrite;
 	// send power on to measure circuit
 	measureOn = 1;
 
@@ -142,17 +145,12 @@ void measureSalinity()
 
 	// power off measureing circuit
 	measureOn = 0;
-
-	//write to SRAM 
-	sSRAMWrite = true;  
-
 }
 
 void measureTemperature()
 {
 	unsigned short channel;
 	unsigned int SRAMWriteValue;
-	bool sSRAMWrite;
 	// send power on to measure circuit
 	measureOn = 1;
 
@@ -165,15 +163,11 @@ void measureTemperature()
 
 	// power off measureing circuit
 	measureOn = 1; 
-
-	//write to SRAM 
-	sSRAMWrite = true;  
-
 }
 
-void ADCRead(unsigned char channel)
+short ADCRead(unsigned char channel)
 {
-	unsigned short writeValue;
+	unsigned short writeValue, SRAMWriteValue;
 	ADCON0 = channel;
 	TRISA = 0b1111111;
 	ADCON1 = 0b10000000;
@@ -182,19 +176,26 @@ void ADCRead(unsigned char channel)
 	while(ADCON0bits.GO_DONE != 0);
 	writeValue = ADRESH;
 	writeValue = (SRAMWriteValue << 8) | ADRESL; 
-	return writeValue
+	return writeValue;
+
 }
 
 void main() {
     short i = 0, b = 0;
-    TRISC = PORTC = TRISD = PORTD = 0x0; // Enable ports for digital output
+    TRISC = TRISD = 0xFF; // Enable ports for digital input
+    TRISD = 0b00001111;
+    rst = 1;
+    rst = 0;
 
     /*for (i = 0; i < 16; i++) {
         writeSRAM(0, i);
     }*/
     
     while(1) {
-        for (i = 0; i < 16; writeSRAM(0, i++));
-        for (i = 0; i < 16; readSRAM(0, i++));
+        measureFlowRate();
+        for(b = 0; b < 0xFFF; b++){
+            delay(0xFFFF, 0xFFFF);
+            delay(0xFFFF, 0xFFFF);
+        }
     }
 }
