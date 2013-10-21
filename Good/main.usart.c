@@ -3,7 +3,6 @@
 //#include <p18f25k22.h>
 #include <p18f452.h>
 #include <usart.h>
-#include <adc.h>
 
 //  turn off the watch dog timer
 #pragma config WDT=OFF              // Watchdog off
@@ -26,8 +25,27 @@ void delay() {
 }
 
 void main() {
-    int i = 0;
+    short i = 0;
+    OpenUSART(USART_TX_INT_OFF &
+              USART_RX_INT_OFF &
+              USART_ASYNCH_MODE &
+              USART_EIGHT_BIT &
+              USART_CONT_RX &
+              USART_BRGH_HIGH &
+              USART_ADDEN_OFF,
+              12);
     while (1) {
-        i++;
+        if (!BusyUSART()) {
+            //putcUSART(i);
+            putcUSART(0xff);
+            //putsUSART("U"); //0101 0101
+            //putsUSART("ª"); //1010 1010
+            //putsUSART("ÿ"); //1111 1111
+            //if (i % 10) {
+            //    putsUSART("\033[2J");
+            //}
+        } else {
+            i++;
+        }
     }
 }
