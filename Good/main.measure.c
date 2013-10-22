@@ -2,6 +2,7 @@
 //#include <p18f452.h>
 //#include <p18f25k22.h>
 #include <p18f452.h>
+#include <delays.h>
 
 //  turn off the watch dog timer
 #pragma config WDT=OFF              // Watchdog off
@@ -42,6 +43,8 @@
 //extern bool sSRAMWrite;
 
 void delay(int i, int k);
+void Delay10KTCYx( unsigned char unit );
+
 short ADCRead(unsigned char channel);
 void measureTemperature();
 void measureCarbon();
@@ -88,10 +91,13 @@ void measureFlowRate()
 	window = 1;
 
 	//wait to perform measurement for ~400ms
-        for(b = 0; b < 0xAFFF; b++){
-            delay(0xFFFF, 0xFFFF);
+      //  for(b = 0; b < 0xAFFF; b++){
+        //    delay(0xFFFF, 0xFFFF);
 
-        }
+        //}
+        
+	Delay10KTCYx(1);
+	
 	//turn off window
 	window = 0;
 
@@ -126,7 +132,7 @@ void measureFlowRate()
 	measureOn = 0;
 
 	//Grab output
-	SRAMWriteValue = count;
+	SRAMWriteValue = count/4;
 }
 
 void measureSalinity()
@@ -151,6 +157,7 @@ void measureTemperature()
 {
 	unsigned short channel;
 	unsigned int SRAMWriteValue;
+	unsigned float temp;
 	// send power on to measure circuit
 	measureOn = 1;
 
@@ -159,8 +166,12 @@ void measureTemperature()
 
 	// perform measurement on AN5
 	channel = 0b00101000;
-	SRAMWriteValue = ADCRead(channel);
+	temp = ADCRead(channel); 
+	
+	//conversion
+	temp = 22*temp-30;
 
+	SRAMWriteValue = temp;
 	// power off measureing circuit
 	measureOn = 1; 
 }
