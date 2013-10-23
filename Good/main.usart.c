@@ -3,6 +3,7 @@
 //#include <p18f25k22.h>
 #include <p18f452.h>
 #include <usart.h>
+#include <timers.h>
 #include <ctype.h>
 #include <stdio.h>
 #include <timers.h>
@@ -18,6 +19,12 @@
 #pragma config CPB=OFF              // Boot
 #pragma config WRTC=OFF             // Configuration Register Write Protection
 #pragma config PWRT=OFF             // Power up timer off
+unsigned char x = 0;
+void delay() {
+    Delay10KTCYx(0xff);
+    Delay10KTCYx(0xff);
+    Delay10KTCYx(0xff);
+    Delay10KTCYx(0xff);
 
 #define     TERMINAL_CLEAR          "\033[2J"
 #define     TERMINAL_RETURN         "\r\n"
@@ -34,11 +41,26 @@ terminalSendPString(char *str) {
     putrsUSART(str);
 }
 
+/*void setupUSART() {
+    TRISCbits.RC6 = 0;
+    TRISCbits.RC7 = 0;
+    TXSTAbits.SYNC = 0;
+    PIE1bits.TXIE = 1;
+    TXSTAbits.TXEN = 1;
+    TXSTAbits.BRGH = 1;
+    RCSTAbits.SPEN = 1;
+    RCSTAbits.CREN = 1;
+    RCSTAbits.ADDEN = 0;
+    SPBRG = 9;
 terminalSendString(char *str) {
     while(BusyUSART());
     putsUSART(str);
 }
 
+void transmitUSART() {
+    TXSTAbits.SYNC = 0;
+    RCSTAbits.SPEN = 1;
+    TXSTAbits.TXEN = 1;
 void sendTerminalCommandLine() {
     terminalSendPString(TERMINAL_RETURN);
     terminalSendPString(TERMINAL_RETURN);
@@ -46,6 +68,10 @@ void sendTerminalCommandLine() {
     terminalSendPString(TERMINAL_RETURN);
     terminalSendPString("Command:\\>");
 }
+void sendUSART(char data) {
+    transmitUSART();
+    while(!PIR1bits.TXIF);
+    TXREG = data;
 
 void updateTerminal() {
     // Clear terminal
@@ -117,6 +143,9 @@ void freeUSART() {
 }
 
 void main() {
+    char c = 'A';
+    TRISCbits.RC7 = 0;
+    setupUSART();
     int i = 0;
     char cmd = 0xff;
     OpenUSART(USART_TX_INT_OFF & USART_RX_INT_OFF & USART_ASYNCH_MODE &
@@ -124,6 +153,14 @@ void main() {
               USART_ADDEN_OFF, 129);
     updateTerminal();
     while (1) {
+        //sendUSART(0b01010101);
+        //sendUSART(0b01111110);
+        sendUSART(c++);
+        //transmitUSART(0x00);
+        //
+        //delay();
+    }
+}*/
         if (DataRdyUSART()) {\
             while(BusyUSART());
             cmd = getcUSART();
@@ -131,6 +168,43 @@ void main() {
             putcUSART(cmd);
         }
 
+void main() {
+    char c = 'a';
+    char str[] = "hello world";
+    /*OpenUSART(USART_TX_INT_OFF &
+              USART_RX_INT_OFF &
+              USART_ASYNCH_MODE &
+              USART_EIGHT_BIT &
+              USART_CONT_RX &
+              USART_BRGH_HIGH &
+              USART_ADDEN_OFF,
+              12);*/
+    OpenUSART(USART_TX_INT_OFF &
+              USART_RX_INT_OFF &
+              USART_ASYNCH_MODE &
+              USART_EIGHT_BIT &
+              USART_CONT_RX &
+              USART_BRGH_HIGH &
+              USART_ADDEN_OFF,
+              12);
+    while (1) {
+        while(BusyUSART());
+        //putcUSART(0b11111111);
+        //delay();
+        putcUSART(0xff);
+        //delay();
+        //if (DataRdyUSART()) {
+            //c = getcUSART();
+        //
+        //putcUSART('U');
+        //delay();
+        putcUSART('A');
+        putcUSART(0x00);
+        //delay();
+        putcUSART(0b01010101);
+        //delay();
+        //putsUSART("\033[2J");
+        //Delay10TCYx(0xff);
         /*if (i == 0xffff) {
             updateTerminal();
         }*/
@@ -171,4 +245,5 @@ void main() {
         
         i++;
     }
+}
 } /* */
