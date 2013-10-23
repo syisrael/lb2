@@ -171,10 +171,10 @@ void measureTemperature()
 	//conversion
 	//1000000000 = 512 =2.5V
 	if (temp <= 0b1000000000){ // if less than 2.5 volts 
-		temp = 14.831*temp - 1.4169
+		temp = 14.831*temp - 1.4169;
 	}
 	else {
-		temp = 9.9238*temp - 10.114;
+		temp = 18.95*temp + 0.2146;
 	}
 	
 	SRAMWriteValue = temp;
