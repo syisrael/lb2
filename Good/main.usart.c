@@ -3,7 +3,7 @@
 //#include <p18f25k22.h>
 #include <p18f452.h>
 #include <usart.h>
-#include <timers.h>
+#include <delays.h>
 
 //  turn off the watch dog timer
 #pragma config WDT=OFF              // Watchdog off
@@ -17,6 +17,7 @@
 #pragma config WRTC=OFF             // Configuration Register Write Protection
 #pragma config PWRT=OFF             // Power up timer off
 unsigned char x = 0;
+
 void delay() {
     Delay10KTCYx(0xff);
     Delay10KTCYx(0xff);

@@ -1,6 +1,6 @@
 /* Compile options:  -ml (Large code model) */
 #include "lcd.h"
-#include <xlcd.h>
+#include "xlcd.h"
 #include <delays.h>
 void DelayXLCD (void);
 void DelayFor18TCY( void );

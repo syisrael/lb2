@@ -2,8 +2,9 @@
 //#include <p18f452.h>
 //#include <p18f25k22.h>
 #include <p18f452.h>
-#include <usart.h>
-#include <adc.h>
+#include <stdio.h>
+#include "lcd.h"
+#include <delays.h>
 
 //  turn off the watch dog timer
 #pragma config WDT=OFF              // Watchdog off
@@ -20,14 +21,14 @@
 #define     PIN_TX      PORTCbits.RC7
 #define     PIN_RX      PORTCbits.RC6
 
-void delay() {
-    int d;
-    for(d = 0; d < 100; d++);
-}
-
+char buffer [33];
+char str1[33] = "Hi mom!";
+char str2[33] = "Woot!!";
 void main() {
-    int i = 0;
-    while (1) {
-        i++;
+    printLCD(str1, str2);
+    while(1){
+        Delay10KTCYx(2);
+        printLCD(str2, str1);
+//        sprintf (buffer, "%d plus %d is %d", 3, 2, 3+2);
     }
 }
