@@ -35,14 +35,13 @@
 #define 	bit10		PORTDbits.RD2
 #define 	bit11		PORTDbits.RD3
 
-#define         rst             PORTDbits.RD6
+#define     rst         PORTDbits.RD6
 
 //typedef enum { false=0, true=1 } boo;
 
 //extern unsigned int SRAMWriteValue;
 //extern bool sSRAMWrite;
 
-void delay(int i, int k);
 void Delay10KTCYx( unsigned char unit );
 
 short ADCRead(unsigned char channel);
@@ -50,15 +49,6 @@ void measureTemperature();
 void measureCarbon();
 void measureSalinity();
 void measureFlowRate();
-
-void delay(int i, int k)
-{
-	int temp = k;
-	for(;i>0;i--){
-		k = temp;
-		for(;k>0;k--);
-	}
-}
 
 void measureCarbon()
 {
@@ -68,7 +58,7 @@ void measureCarbon()
 	measureOn = 1;
 
 	// wait until circuit is stable
-	delay(10000, 0);
+	Delay10KTCYx(25);
 
 	//Perform Measurement and convert to correct format 
 	//Choose a channel adc channel AN1
@@ -96,7 +86,10 @@ void measureFlowRate()
 
         //}
         
-	Delay10KTCYx(1);
+	Delay10KTCYx(2000000);
+	//cycles = (time delay * fosc)
+	//cycles = (15ms *16Mhz)
+	//cycles = 60,000
 	
 	//turn off window
 	window = 0;
@@ -127,8 +120,8 @@ void measureFlowRate()
 	count |= bit0;
 
 	// power off measuring circuit
-        rst = 1;
-        rst = 0;
+    rst = 1;
+    rst = 0;
 	measureOn = 0;
 
 	//Grab output
@@ -143,7 +136,7 @@ void measureSalinity()
 	measureOn = 1;
 
 	// wait until circuit is stable
-	delay(10000, 0);
+	Delay10KTCYx(25);
 
 	//Perform Measurement and convert to correct format  on AN0
 	channel = 0b00000000;
@@ -162,7 +155,7 @@ void measureTemperature()
 	measureOn = 1;
 
 	// wait until circuit is stable
-	delay(10000, 0);
+	Delay10KTCYx(25);
 
 	// perform measurement on AN5
 	channel = 0b00101000;
@@ -200,22 +193,16 @@ short ADCRead(unsigned char channel)
 
 void main() {
     short i = 0, b = 0;
-    TRISC = TRISD = 0xFF; // Enable ports for digital input
-    TRISD = 0b00001111;
-    TRISB = 0x00;
+    //TRISC = TRISD = 0xFF; // Enable ports for digital input
+    //TRISD = 0b00001111;
+    //TRISB = 0x00;
+    TRISC = TRISD = 0x00; // Enable ports for digital output
 
     rst = 1;
     rst = 0;
-
-    /*for (i = 0; i < 16; i++) {
-        writeSRAM(0, i);
-    }*/
     
     while(1) {
         measureTemperature();
-        for(b = 0; b < 0xFFF; b++){
-            delay(0xFFFF, 0xFFFF);
-           // delay(0xFFFF, 0xFFFF);
-        }
+		Delay10KTCYx(100);
     }
 }
