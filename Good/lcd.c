@@ -24,17 +24,22 @@ void clearLCD(void)
     WriteCmdXLCD( BLINK_OFF );
     WriteCmdXLCD( SHIFT_DISP_LEFT );
     while(BusyXLCD());
+    Delay10KTCYx(80);
 }
 
 void printLCD(char * str, char * str2){
     clearLCD();
     SetDDRamAddr(0x80);//0x80 is first row.
+  //  Delay10KTCYx(80);
     while(BusyXLCD());
     putsXLCD(str);
+  //  Delay10KTCYx(80);
     while(BusyXLCD());
     SetDDRamAddr(0xC0);//0xC0 is second row.
+  //  Delay10KTCYx(80);
     while(BusyXLCD());
     putsXLCD(str2);
+ //   Delay10KTCYx(80);
     while(BusyXLCD());
 }
 
@@ -53,11 +58,17 @@ Nop();
 Nop();
 Nop();
 Nop();
+Nop();
+Nop();
+Nop();
+Nop();
+Nop();
+Nop();
 }
 
 void DelayPORXLCD (void)
 {
-Delay1KTCYx(15); // Delay of 15ms
+Delay10KTCYx(75); // Delay of 15ms
 // Cycles = (TimeDelay * Fosc) / 4
 // Cycles = (15ms * 16MHz) / 4
 // Cycles = 60,000
@@ -66,7 +77,7 @@ return;
 
 void DelayXLCD (void)
 {
-Delay1KTCYx(5); // Delay of 5ms
+Delay10KTCYx(25); // Delay of 5ms
 // Cycles = (TimeDelay * Fosc) / 4
 // Cycles = (5ms * 16MHz) / 4
 // Cycles = 20,000
