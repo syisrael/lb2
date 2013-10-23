@@ -178,6 +178,7 @@ void measureTemperature()
 	}
 	
 	SRAMWriteValue = temp;
+        
 	// power off measureing circuit
 	measureOn = 1; 
 }
@@ -201,6 +202,8 @@ void main() {
     short i = 0, b = 0;
     TRISC = TRISD = 0xFF; // Enable ports for digital input
     TRISD = 0b00001111;
+    TRISB = 0x00;
+
     rst = 1;
     rst = 0;
 
@@ -209,10 +212,10 @@ void main() {
     }*/
     
     while(1) {
-        measureFlowRate();
+        measureTemperature();
         for(b = 0; b < 0xFFF; b++){
             delay(0xFFFF, 0xFFFF);
-            delay(0xFFFF, 0xFFFF);
+           // delay(0xFFFF, 0xFFFF);
         }
     }
 }

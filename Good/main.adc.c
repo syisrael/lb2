@@ -20,7 +20,7 @@ void delay() {
     for(d = 0; d < 100; d++);
 }
 
-void ADCSelectChannel(byte channel) {
+void ADCSelectChannel(char channel) {
     ADCON0bits.CHS = channel;
 }
 

@@ -1,10 +1,4 @@
 /* Compile options:  -ml (Large code model) */
-//#include <p18f452.h>
-//#include <p18f25k22.h>
-#include <p18f452.h>
-#include <stdio.h>
-#include "lcd.h"
-#include <delays.h>
 
 //  turn off the watch dog timer
 #pragma config WDT=OFF              // Watchdog off
@@ -18,17 +12,17 @@
 #pragma config WRTC=OFF             // Configuration Register Write Protection
 #pragma config PWRT=OFF             // Power up timer off
 
-#define     PIN_TX      PORTCbits.RC7
-#define     PIN_RX      PORTCbits.RC6
+#include "global.h"
 
-char buffer [33];
-char str1[33] = "Hi mom!";
-char str2[33] = "Woot!!";
+int m[] = { 0xf7ca, 0x1bcc, 0x003a, 0x1010 };
+boolean flagTemperatureFahrenheit = false;
+
 void main() {
-    printLCD(str1, str2);
-    while(1){
-        Delay10KTCYx(2);
-        printLCD(str2, str1);
-//        sprintf (buffer, "%d plus %d is %d", 3, 2, 3+2);
+    char cmd = 0xff;
+    OpenUSART(USART_TX_INT_OFF & USART_RX_INT_OFF & USART_ASYNCH_MODE &
+              USART_EIGHT_BIT & USART_CONT_RX & USART_BRGH_HIGH &
+              USART_ADDEN_OFF, 129);
+    while (1) {
+        terminalTask();
     }
 }
