@@ -1,85 +1,71 @@
-/* Compile options:  -ml (Large code model) */
-#include "lcd.h"
-#include "xlcd.h"
+#include <p18f452.h>
+#include <usart.h>
 #include <delays.h>
-void DelayXLCD (void);
-void DelayFor18TCY( void );
-void DelayPORXLCD (void);
-void clearLCD(void);
+#include <timers.h>
+#include "lcd/xlcd.h"
+#include "lcd.h"
 
-void disableLCD(void)
-{
-    WriteCmdXLCD( DOFF );
+#include <stdio.h>
+#include <stdlib.h>
+
+extern char flagDisplayOn;
+
+// Delay for 18 ms
+void DelayFor18TCY(void) {
+    Delay1KTCYx(1);
 }
 
-void enableLCD(void)
-{
-    clearLCD();
+// Delay for 15 ms
+void DelayPORXLCD(void) {
+    Delay1KTCYx(1);
 }
 
-void clearLCD(void)
-{
+// Delay for 5 ms
+void DelayXLCD(void) {
+    Delay1KTCYx(1);
+}
+
+void setupLCD(void) {
     OpenXLCD(FOUR_BIT & LINES_5X7);
-    WriteCmdXLCD( FOUR_BIT & LINES_5X7 );
-    WriteCmdXLCD( BLINK_OFF );
-    WriteCmdXLCD( SHIFT_DISP_LEFT );
-    while(BusyXLCD());
-    Delay10KTCYx(80);
-}
-
-void printLCD(char * str, char * str2){
+    WriteCmdXLCD(SHIFT_DISP_LEFT);
     clearLCD();
-    SetDDRamAddr(0x80);//0x80 is first row.
-  //  Delay10KTCYx(80);
-    while(BusyXLCD());
-    putsXLCD(str);
-  //  Delay10KTCYx(80);
-    while(BusyXLCD());
-    SetDDRamAddr(0xC0);//0xC0 is second row.
-  //  Delay10KTCYx(80);
-    while(BusyXLCD());
-    putsXLCD(str2);
- //   Delay10KTCYx(80);
-    while(BusyXLCD());
 }
 
-
-void DelayFor18TCY( void )
-{
-Nop();
-Nop();
-Nop();
-Nop();
-Nop();
-Nop();
-Nop();
-Nop();
-Nop();
-Nop();
-Nop();
-Nop();
-Nop();
-Nop();
-Nop();
-Nop();
-Nop();
-Nop();
+void openLCD(void) {
+    if (!flagDisplayOn) {
+        WriteCmdXLCD(DON);
+        while (BusyXLCD());
+        flagDisplayOn = 1;
+        PORTDbits.RD7 = 0;
+    }
 }
 
-void DelayPORXLCD (void)
-{
-Delay10KTCYx(75); // Delay of 15ms
-// Cycles = (TimeDelay * Fosc) / 4
-// Cycles = (15ms * 16MHz) / 4
-// Cycles = 60,000
-return;
+void closeLCD(void) {
+    WriteCmdXLCD(DOFF);
+    while (BusyXLCD());
+    flagDisplayOn = 0;
+    PORTDbits.RD7 = 1;
 }
 
-void DelayXLCD (void)
-{
-Delay10KTCYx(25); // Delay of 5ms
-// Cycles = (TimeDelay * Fosc) / 4
-// Cycles = (5ms * 16MHz) / 4
-// Cycles = 20,000
-return;
+void clearLCD(void) {
+    openLCD();
+    while (BusyXLCD());
+    SetDDRamAddr(0x80);
+    while (BusyXLCD());
+    putrsXLCD("                ");
+    while (BusyXLCD());
+    SetDDRamAddr(0xc0);
+    putrsXLCD("                ");
+}
+
+void printLCD(char *line1, char *line2) {
+    openLCD();
+    while (BusyXLCD());
+    SetDDRamAddr(0x80);
+    while (BusyXLCD());
+    putsXLCD(line1);
+    while (BusyXLCD());
+    SetDDRamAddr(0xc0);
+    while (BusyXLCD());
+    putsXLCD(line2);
 }

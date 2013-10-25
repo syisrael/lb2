@@ -8,10 +8,15 @@
 #ifndef LCD_H
 #define	LCD_H
 
-void disableLCD(void);
-void enableLCD (void);
-void printLCD(char * str, char * str2);
+void DelayFor18TCY(void);
+void DelayPORXLCD(void);
+void DelayXLCD(void);
 
+void setupLCD(void);
+void openLCD(void);
+void closeLCD(void);
+void clearLCD(void);
+void printLCD(char*, char*);
 
-#endif	/* LCD_H */
+#endif	LCD_H
 
