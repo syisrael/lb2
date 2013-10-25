@@ -8,15 +8,15 @@
 #ifndef LCD_H
 #define	LCD_H
 
-void DelayFor18TCY(void);
-void DelayPORXLCD(void);
-void DelayXLCD(void);
+extern void DelayFor18TCY(void);
+extern void DelayPORXLCD(void);
+extern void DelayXLCD(void);
 
-void setupLCD(void);
-void openLCD(void);
-void closeLCD(void);
-void clearLCD(void);
-void printLCD(char*, char*);
+extern void setupLCD(void);
+extern void openLCD(void);
+extern void closeLCD(void);
+extern void clearLCD(void);
+extern void printLCD(char*, char*);
 
 #endif	LCD_H
 

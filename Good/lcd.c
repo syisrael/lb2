@@ -1,14 +1,10 @@
 #include <p18f452.h>
-#include <usart.h>
 #include <delays.h>
 #include <timers.h>
-#include "lcd/xlcd.h"
+#include "xlcd.h"
 #include "lcd.h"
 
-#include <stdio.h>
-#include <stdlib.h>
-
-extern char flagDisplayOn;
+char flagDisplayOn = 0;
 
 // Delay for 18 ms
 void DelayFor18TCY(void) {
@@ -26,6 +22,7 @@ void DelayXLCD(void) {
 }
 
 void setupLCD(void) {
+    TRISDbits.RD7 = 0;
     OpenXLCD(FOUR_BIT & LINES_5X7);
     WriteCmdXLCD(SHIFT_DISP_LEFT);
     clearLCD();
