@@ -7,18 +7,8 @@
 #include <ctype.h>
 #include <stdio.h>
 #include <timers.h>
-
-//  turn off the watch dog timer
-#pragma config WDT=OFF              // Watchdog off
-#pragma config BOR=OFF              // Brown out reset
-#pragma config LVP=OFF              //
-#pragma config CP0=OFF              // Code protection
-#pragma config CP1=OFF              // Code protection
-#pragma config CP2=OFF              // Code protection
-#pragma config CP3=OFF              // Code protection
-#pragma config CPB=OFF              // Boot
-#pragma config WRTC=OFF             // Configuration Register Write Protection
-#pragma config PWRT=OFF             // Power up timer off
+#include "communications.h"
+#include "measure.h"
 
 #define     TERMINAL_CLEAR          "\033[2J"
 #define     TERMINAL_RETURN         "\r\n"
@@ -26,10 +16,9 @@
 
 typedef enum  { false = 0, true = 1 } boolean;
 
-int m[] = { 0xf7ca, 0x1bcc, 0x003a, 0x1010 };
 char buffer[40];
 char cmd;
-boolean flagTemperatureFahrenheit = false;
+extern char fahrenheit;
 
 void terminalSendPString(char *str) {
     while(BusyUSART());
@@ -53,7 +42,7 @@ void updateTerminal() {
     // Clear terminal
     terminalSendPString(TERMINAL_CLEAR);
 
-    terminalSendPString("CheckIt-StoreIt Terminal POS v0.81b");
+    terminalSendPString("CheckIt-StoreIt Terminal v0.81b");
     terminalSendPString(TERMINAL_RETURN);
     terminalSendPString(TERMINAL_RETURN);
     terminalSendPString("Last Measurements");
@@ -61,29 +50,29 @@ void updateTerminal() {
 
     // Carbon
     terminalSendPString("    Carbon:       ");
-    sprintf(buffer, TERMINAL_NUMBER_FORMAT, m[0]++);
+    sprintf(buffer, TERMINAL_NUMBER_FORMAT, getCarbon());
     terminalSendString(buffer);
     terminalSendPString(" ppm");
     terminalSendPString(TERMINAL_RETURN);
 
     // Salinity
     terminalSendPString("    Salinity:     ");
-    sprintf(buffer, TERMINAL_NUMBER_FORMAT, m[1]--);
+    sprintf(buffer, TERMINAL_NUMBER_FORMAT, getSalinity());
     terminalSendString(buffer);
     terminalSendPString(" ppt");
     terminalSendPString(TERMINAL_RETURN);
 
     // Flow Rate
     terminalSendPString("    Flow Rate:    ");
-    sprintf(buffer, TERMINAL_NUMBER_FORMAT, m[2]++);
+    sprintf(buffer, TERMINAL_NUMBER_FORMAT, getFlowRate());
     terminalSendString(buffer);
     terminalSendPString(" Lps");
     terminalSendPString(TERMINAL_RETURN);
 
     // Temperature
     terminalSendPString("    Temperature:  ");
-    sprintf(buffer, TERMINAL_NUMBER_FORMAT, m[3]--);
-    if (flagTemperatureFahrenheit) {
+    sprintf(buffer, TERMINAL_NUMBER_FORMAT, getTemp(fahrenheit));
+    if (fahrenheit) {
         terminalSendString(buffer);
         terminalSendPString(" F");
     } else {
@@ -108,8 +97,6 @@ void sendTerminalCommandList() {
     terminalSendPString(TERMINAL_RETURN);
     terminalSendPString("d - Show LCD display");
     terminalSendPString(TERMINAL_RETURN);
-    terminalSendPString("u - Change temperature units (C/F)");
-    terminalSendPString(TERMINAL_RETURN);
     terminalSendPString("c - Clear terminal");
     sendTerminalCommandLine();
 }
@@ -119,16 +106,7 @@ void freeUSART() {
 }
 
 
-void main() {
-    OpenUSART(USART_TX_INT_OFF &
-              USART_RX_INT_OFF &
-              USART_ASYNCH_MODE &
-              USART_EIGHT_BIT &
-              USART_CONT_RX &
-              USART_BRGH_HIGH &
-              USART_ADDEN_OFF,
-              12);
-    while (1) {
+void terminalTask() {
         if (DataRdyUSART()) {\
             while(BusyUSART());
             cmd = getcUSART();
@@ -143,8 +121,29 @@ void main() {
         case '1':
             terminalSendPString(TERMINAL_RETURN);
             terminalSendPString("Measuring carbon...");
+            measureCarbon();
             terminalSendPString(TERMINAL_RETURN);
-            Delay10KTCYx(0x00ff);
+            updateTerminal();
+            break;
+        case '2':
+            terminalSendPString(TERMINAL_RETURN);
+            terminalSendPString("Measuring salinity...");
+            measureSalinity();
+            terminalSendPString(TERMINAL_RETURN);
+            updateTerminal();
+            break;
+        case '3':
+            terminalSendPString(TERMINAL_RETURN);
+            terminalSendPString("Measuring flow rate...");
+            measureFlowRate();
+            terminalSendPString(TERMINAL_RETURN);
+            updateTerminal();
+            break;
+        case '4':
+            terminalSendPString(TERMINAL_RETURN);
+            terminalSendPString("Measuring temperature...");
+            measureTemperature();
+            terminalSendPString(TERMINAL_RETURN);
             updateTerminal();
             break;
         case 'c':
@@ -155,12 +154,6 @@ void main() {
             terminalSendPString("Revealing display");
             sendTerminalCommandLine();
             break;
-        case 'u':
-            terminalSendPString(TERMINAL_RETURN);
-            flagTemperatureFahrenheit = ~flagTemperatureFahrenheit;
-            terminalSendPString("Changed temperature unit");
-            sendTerminalCommandLine();
-            break;
         case 0xff:
             break;
         default:
@@ -169,5 +162,4 @@ void main() {
             sendTerminalCommandLine();
         }
         cmd = 0xff;
-    }
 }

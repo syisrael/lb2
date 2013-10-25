@@ -7,6 +7,7 @@
 #include <stdlib.h>
 #include "measure.h"
 #include "lcd.h"
+#include "communications.h"
 
 #pragma config WDT=OFF              // Watchdog off
 #pragma config BOR=OFF              // Brown out reset
@@ -82,7 +83,6 @@ void showMeasurements(){
             sprintf(str1,"Temp: %dC                \n\r",value);
         }
     }
-    putsUSART(str1);
 
     value = getSalinity();
     if(value > 50){
@@ -92,7 +92,6 @@ void showMeasurements(){
     }else{
         sprintf(str2,"Salinity: %dppt                \n\r",getSalinity());
     }
-    putsUSART(str2);
     printLCD(str1,str2);
     for(i=0;i<5;i++)
         Delay10KTCYx(1000);
@@ -105,7 +104,6 @@ void showMeasurements(){
     }else{
         sprintf(str1,"Carbon: %dppm                \n\r",getCarbon());
     }
-    putsUSART(str1);
     value = getCarbon();
     if(value > 1000){
         sprintf(str2,"Flow: >1000dLps                \n\r");
@@ -114,7 +112,6 @@ void showMeasurements(){
     }else{
         sprintf(str2,"Flow: %dLps                \n\r",getFlowRate());
     }
-    putsUSART(str2);
     printLCD(str1,str2);
     for(i=0;i<5;i++)
         Delay10KTCYx(1000);
@@ -132,17 +129,14 @@ void main(void) {
     setupLCD();
     sprintf(str1,"EE478 Team6 Phase1");
     sprintf(str2,"Best Demo. EVER!");
-    
+    measureCarbon();
+    measureTemperature();
+    measureSalinity();
+    measureFlowRate();
+    updateTerminal();
     while(1){
-        measureCarbon();
-        measureTemperature();
-        measureFlowRate();
-        measureSalinity();
-        //printLCD(str1,str2);
-        Delay10KTCYx(0xffff);
+        terminalTask();
         showMeasurements();
-        //printLCD(str1,str2);
-        //Delay10KTCYx(10);
     }
 }
 
