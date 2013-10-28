@@ -1,12 +1,12 @@
 #include <p18f452.h>
 #include <i2c.h>
-#include <timers.h>
+#include <referenceTimers.h>
 #include <ctype.h>
 #include <stdio.h>
-#include <timers.h>
+#include <referenceTimers.h>
 
 #define     MAX_RETRY_ATTEMPTS          10
-#define     MAX_WAITTIME                0xffff
+#define     MAX_WAITTIME                5       // seconds
 
 #define     MASTER_ADDRESS              0
 #define     SLAVE0_ADDRESS              1
@@ -16,18 +16,33 @@
 #define     SLAVE4_ADDRESS              5
 #define     SLAVE5_ADDRESS              6
 
-typedef enum {M_IDLE, M_TRANSMIT, M_WAITACK, M_LISTEN, M_RECEIVE, M_ERROR} MasterState;
-typedef enum {S_LISTEN, S_PROCESSBUS, S_TRANSMIT, S_WAITACK, S_ERROR} SlaveState;
-
-MasterState mState = M_IDLE;
-SlaveState sState = S_LISTEN;
+#define     DEVICE_ADDRESS              0   // MASTER_ADDRESS 0
+                                            // SLAVE0_ADDRESS 1
+                                            // SLAVE1_ADDRESS 2
+                                            // SLAVE2_ADDRESS 3
+                                            // SLAVE3_ADDRESS 4
+                                            // SLAVE4_ADDRESS 5
+                                            // SLAVE5_ADDRESS 6
+#define     I2C_CLOCK_DIVIDER           9   //
+                                        
 // flagTXData
 // flagRXData
 // retryAttempts
 // errors
-// timer
+// referenceTimer
 
-void masterCommunications() {
+#if !DEVICE_ADDRESS
+// MASTER
+typedef enum {M_IDLE, M_TRANSMIT, M_WAITACK, M_LISTEN, M_RECEIVE, M_ERROR} MasterState;
+MasterState mState = M_IDLE;
+
+void setupI2C() {
+    OpenI2C (MASTER, SLEW_OFF);
+    SSPADD = I2C_CLOCK_DIVIDER;
+    StartI2C();
+}
+
+void communications() {
     switch (mState) {
     case M_IDLE:
         if (flagTXData) {
@@ -38,7 +53,7 @@ void masterCommunications() {
     case M_TRANSMIT:
         // send TXData on bus
         retryAttempts++;
-        timer = 0;
+        referenceTimer = 0;
         mState = M_WAITACK;
         break;
     case M_WAITACK:
@@ -47,34 +62,28 @@ void masterCommunications() {
             retryAttempts = 0;
         } else if (retryAttempts > MAX_RETRY_ATTEMPTS) { // Limit exceeded
             mState = M_ERROR;
-        } else if (timer > MAX_WAITTIME) { // Retransmit
+        } else if (referenceTimer > MAX_WAITTIME) { // Retransmit
             mState = M_TRANSMIT;
-        } else { // Wait
-            timer++;
         }
         break;
     case M_LISTEN:
-        if (retryAttempts > MAX_RETRY_ATTEMPTS | timer > MAX_WAITTIME) { // Limit exceeded
+        if (retryAttempts > MAX_RETRY_ATTEMPTS | referenceTimer > MAX_WAITTIME) { // Limit exceeded
             mState = M_ERROR;
         } else if (flagRXData) { // Data is on bus
-            timer = 0;
+            referenceTimer = hwTimer;
             mState = M_RECEIVE;
-        } else { // Wait
-            timer++;
         }
         break;
     case M_RECEIVE:
         // receive data on bus
-        if (timer > MAX_WAITTIME) { // Limit exceeded
+        if (hwTimer - referenceTimer > MAX_WAITTIME) { // Limit exceeded
             mState = M_ERROR;
         } else if (/* error data */) { // Error with data, make slave retransmit
             retryAttempts++;
             mState = M_LISTEN;
         } else if (/* data is good */) {
-            // send ACK
+            AckI2C(); // Send ACK
             mState = M_IDLE;
-        } else { // Wait
-            timer++;
         }
         break;
     case M_ERROR:
@@ -83,8 +92,18 @@ void masterCommunications() {
         break;
     }
 }
+#else
+// SLAVE
+typedef enum {S_LISTEN, S_PROCESSBUS, S_TRANSMIT, S_WAITACK, S_ERROR} SlaveState;
+SlaveState sState = S_LISTEN;
 
-void slaveCommunications() {
+void setupI2C() {
+    OpenI2C (SLAVE, SLEW_OFF);
+    SSPADD = I2C_CLOCK_DIVIDER;
+    StartI2C();
+}
+
+void communications() {
     switch (sState) {
     case S_LISTEN:
         if (flagRXData) {
@@ -104,19 +123,17 @@ void slaveCommunications() {
     case S_TRANSMIT:
         // send TXData on bus
         retryAttempts++;
-        timer = 0;
+        referenceTimer = hwTimer;
         sState = S_WAITACK;
         break;
     case S_WAITACK:
         if (/* receive ack */) { // Master ACK
-            // sendACK
+            AckI2C(); // Send ACK
             sState = S_LISTEN;
         } else if (retryAttempts > MAX_RETRY_ATTEMPTS) { // Limit exceeded
             sState = S_ERROR;
-        } else if (timer > MAX_WAITTIME) { // Retransmit
+        } else if (hwTimer - referenceTimer > MAX_WAITTIME) { // Retransmit
             sState = S_TRANSMIT;
-        } else { // Wait
-            timer++;
         }
         break;
     case S_ERROR:
@@ -125,3 +142,4 @@ void slaveCommunications() {
         break;
     }
 }
+#endif
