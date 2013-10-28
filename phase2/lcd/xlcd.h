@@ -1,6 +1,5 @@
 #ifndef __XLCD_H
 #define __XLCD_H
-#include "p18cxxx.h"
 /* PIC18 XLCD peripheral routines.
  *
  *   Notes:
