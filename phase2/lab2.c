@@ -44,8 +44,8 @@ void timer_isr (void)
 	INTCONbits.TMR0IF = 0;
 	timerFlag = 1;
 	tCounter++;
-	sprintf(str1,"\n\rTime: %d",tCounter);
-	terminalSendString(str1);
+	//sprintf(str1,"\n\rTime: %d",tCounter);
+	//terminalSendString(str1);
 }
 
 void showMeasurements()
@@ -86,8 +86,8 @@ void showMeasurements()
 				sprintf(str2,"Salinity: %4dppt",getSalinity());
 			}
                         printLCD(str1,str2);
-                        sprintf(buf,"\n\rSending to LCD: \n\r%s\n\r%s\n\r",str1,str2);
-                        terminalSendString(buf);
+                        //sprintf(buf,"\n\rSending to LCD: \n\r%s\n\r%s\n\r",str1,str2);
+                        //terminalSendString(buf);
 
 		} else {
 			value = getCarbon();
@@ -107,8 +107,8 @@ void showMeasurements()
 				sprintf(str2,"Flow: %4dLps           ",getFlowRate());
 			}
 			printLCD(str1,str2);
-			sprintf(buf,"\n\rSending to LCD: \n\r%s\n\r%s\n\r",str1,str2);
-                        terminalSendString(buf);
+			//sprintf(buf,"\n\rSending to LCD: \n\r%s\n\r%s\n\r",str1,str2);
+                        //terminalSendString(buf);
 		}
 	}
 }
