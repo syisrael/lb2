@@ -5,7 +5,7 @@
 #include <timers.h>
 #include "measure.h"
 
-#define     measureOn           PORTAbits.RA4 //change if necessary digital I/O for power controller initialzed as output
+#define         measureOn       PORTAbits.RA4 //change if necessary digital I/O for power controller initialzed as output
 #define 	window		PORTAbits.RA2
 
 #define 	bit0		PORTAbits.RA5
