@@ -16,6 +16,7 @@ void updateTerminal(void);
 void sendTerminalCommandLine(void);
 void terminalSendString(char *str);
 void terminalSendPString(char *str);
+void setupTerminal(void);
 
 #endif	/* COMMUNICATIONS_H */
 
