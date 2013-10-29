@@ -75,7 +75,7 @@ void setupI2C() {
 char i = 0;
 void communications() {
     if (cmd.address > DEVICE_ADDRESS) {
-        // Setup MASTER->SLAVE
+        // Setup SLAVE<-MASTER
         IdleI2C();
         StartI2C();
         do {
