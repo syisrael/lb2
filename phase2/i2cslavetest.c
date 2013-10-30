@@ -4,8 +4,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <timers.h>
-
+#include "communications.h"
 #include <i2c.h>
+#include <usart.h>
 
 #pragma config WDT=OFF              // Watchdog off
 #pragma config BOR=OFF              // Brown out reset
@@ -21,6 +22,7 @@ void setupTimer(void);
 void setupI2C(void);
 void communications(void);
 
+int fahrenheit = 1;
 int tCounter = 0;
 char flagTimer = 0;
 void timer_isr (void)
@@ -85,8 +87,11 @@ void communications() {
         //StartI2C();
         if (DataRdyI2C()) {
             status = getcI2C();
-            
+            // say processing
+            terminalSendPString("Processing\n\r");
             if (status == DEVICE_ADDRESS) {
+                // say reading message
+                terminalSendPString("Reading Message\n\r");
                 do {
                     status = 0;
                     while (getsI2C(receiveBuffer, MASTER_BUFFER_SIZE));
@@ -97,15 +102,20 @@ void communications() {
                         NotAckI2C();
                     }
                 } while (status != 0b00000111);
-
+                // say some bit thing
+                terminalSendPString("Some Bit Thing\n\r");
                 while (SSPSTATbits.S != 1);
-
+                // listening again
+                terminalSendPString("Listening Again\n\r");
                 while (DataRdyI2C() == 0);
                 getcI2C();
-
+                // say receiving buffer
+                terminalSendPString("Receiving Buffer\n\r");
                 if (SSPSTAT & 0x04) {
                     while (putsI2C(transmitBuffer));
                 }
+                // print contents to usart
+                terminalSendPString("Print Contents To USART\n\r");
             }
         }
     }    
@@ -114,10 +124,11 @@ void communications() {
 void main(void)
 {
     setupTimer();
-    //setupTerminal();
+    setupTerminal();
     setupI2C();
     while(1) {
-        if (flagTimer = 1) {
+        if (flagTimer) {
+            terminalSendPString("Tick\n\r");
             i2ccmd.address = 1;
             i2ccmd.command = 1;
             i2ccmd.device = 1;
