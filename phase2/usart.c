@@ -163,3 +163,8 @@ void terminalTask() {
         }
         cmd = 0xff;
 }
+
+void setupTerminal() {
+    OpenUSART(USART_TX_INT_OFF & USART_RX_INT_OFF & USART_ASYNCH_MODE &
+              USART_EIGHT_BIT & USART_CONT_RX, 129);
+}

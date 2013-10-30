@@ -1,7 +1,9 @@
+/* */
 #include <p18f452.h>
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <timers.h>
 
 #include <i2c.h>
 
@@ -14,6 +16,10 @@
 #pragma config CP3=OFF              // Code protection
 #pragma config CPB=OFF              // Boot
 #pragma config WRTC=OFF             // Configuration Register Write Protection
+
+void setupTimer(void);
+void setupI2C(void);
+void communications(void);
 
 int tCounter = 0;
 char flagTimer = 0;
@@ -32,106 +38,93 @@ void high_interrupt (void)
 #pragma code
 #pragma interrupt timer_isr
 
-void setupTimer(void) {
-    OpenTimer0( TIMER_INT_ON & T0_16BIT & T0_SOURCE_INT & T0_PS_1_128);
+void setupTimer() {
+    OpenTimer0(TIMER_INT_ON & T0_16BIT & T0_SOURCE_INT & T0_PS_1_128);
     INTCONbits.GIE = 1; //enable interrupts
     TRISBbits.RB1 = 1; //F or C switch
 }
 
 #define     MAX_RETRY_ATTEMPTS          10
 #define     MAX_WAITTIME                5   // seconds
-#define     DEVICE_ADDRESS              0   // MASTER_ADDRESS 0
+#define     DEVICE_ADDRESS              1   // MASTER_ADDRESS 0
                                             // SLAVE0_ADDRESS 1
                                             // SLAVE1_ADDRESS 2
                                             // SLAVE2_ADDRESS 3
                                             // SLAVE3_ADDRESS 4
                                             // SLAVE4_ADDRESS 5
                                             // SLAVE5_ADDRESS 6
-#define     I2C_CLOCK_DIVIDER           9   // 400 kHZ
+#define     I2C_CLOCK_DIVIDER           0x19   // 400 kHZ
 
-#define     MASTER_PACKET_SIZE          20
-#define     SLAVE_PACKET_SIZE           52
-#define     MASTER_BUFFER_SIZE          4*2 + 1
-#define     SLAVE_BUFFER_SIZE           8*2 + 1
+#define     MASTER_BUFFER_SIZE          3*2 + 1
+#define     SLAVE_BUFFER_SIZE           7*2 + 1
 
 int retryAttempts = 0;
 int errors = 0;
 int referenceTimer = 0;
-char transmitBuffer[MASTER_BUFFER_SIZE];
-char receiveBuffer[SLAVE_BUFFER_SIZE];
-char status = 0;
-char buffer = 0;
+unsigned char transmitBuffer[SLAVE_BUFFER_SIZE];
+unsigned char receiveBuffer[MASTER_BUFFER_SIZE];
+short status = 0;
 
 typedef struct { char address, command, device, measureType; } I2CCommand;
-I2CCommand cmd = { 0, 0, 0, 0 };
+I2CCommand i2ccmd = { 0, 0, 0, 0 };
 
 void setupI2C() {
-    OpenI2C (MASTER, SLEW_OFF);
+    TRISCbits.RC3 = 1;
+    TRISCbits.RC4 = 1;
+    OpenI2C (SLAVE_7, SLEW_OFF);
     SSPADD = I2C_CLOCK_DIVIDER;
-    transmitBuffer[MASTER_PACKET_SIZE] = '\0';
-    receiveBuffer[SLAVE_PACKET_SIZE] = '\0';
+    transmitBuffer[SLAVE_BUFFER_SIZE] = '\0';
+    receiveBuffer[MASTER_BUFFER_SIZE] = '\0';
 }
 
 char i = 0;
 void communications() {
-    if (cmd.address > DEVICE_ADDRESS) {
+
+    if (i2ccmd.address > DEVICE_ADDRESS) {
         // Setup SLAVE<-MASTER
-        IdleI2C();
-        StartI2C();
-        do {
-            status = WriteI2C(cmd.address << 1); // Write
-
-            if (status == -1) {
-                getcI2C();
-                SSPCON1bits.WCOL = 0b0;
-            }
-        } while (status != 0);
-        // TX from MASTER->SLAVE
-        for (i = 0; i < MASTER_BUFFER_SIZE; transmitBuffer[i++] = 0);
-        transmitBuffer[0] = cmd.address;
-        transmitBuffer[1] = cmd.command;
-        transmitBuffer[2] = cmd.measureType;
-        transmitBuffer[3] = cmd.device;
-        transmitBuffer[4] = ~cmd.address;
-        transmitBuffer[5] = ~cmd.command;
-        transmitBuffer[6] = ~cmd.measureType;
-        transmitBuffer[7] = ~cmd.device;
-        while (putsI2C(transmitBuffer) != 0);
-
-        // Setup MASTER<-SLAVE
-        IdleI2C();
-        RestartI2C();
-        IdleI2C();
-        getcI2C();
-        do {
-            status = WriteI2C((cmd.address << 1) | 0b1); // Read
+        //StartI2C();
+        if (DataRdyI2C()) {
+            status = getcI2C();
             
-            if (status == -1) {
+            if (status == DEVICE_ADDRESS) {
+                do {
+                    status = 0;
+                    while (getsI2C(receiveBuffer, MASTER_BUFFER_SIZE));
+                    for (i = 0; i < MASTER_BUFFER_SIZE / 2; i++) {
+                        status |= (receiveBuffer[i] == ~receiveBuffer[MASTER_BUFFER_SIZE / 2 + i]) << i;
+                    }
+                    if (status != 0b00000111) {
+                        NotAckI2C();
+                    }
+                } while (status != 0b00000111);
+
+                while (SSPSTATbits.S != 1);
+
+                while (DataRdyI2C() == 0);
                 getcI2C();
-                SSPCON1bits.WCOL = 0b0;
+
+                if (SSPSTAT & 0x04) {
+                    while (putsI2C(transmitBuffer));
+                }
             }
-        } while (status != 0);
-        // RX from MASTER<-SLAVE
-        do {
-            while (getsI2C(receiveBuffer,SLAVE_PACKET_SIZE));
-            (receiveBuffer[i] == )
-            status = 0
-        } while (status);
-        NotAckI2C();
-        while (SSPCON2bits.ACKEN != 0);
-        StopI2C();
+        }
     }    
 }
 
 void main(void)
 {
     setupTimer();
-    setupTerminal();
+    //setupTerminal();
     setupI2C();
     while(1) {
         if (flagTimer = 1) {
+            i2ccmd.address = 1;
+            i2ccmd.command = 1;
+            i2ccmd.device = 1;
+            i2ccmd.measureType = 1;
             communications();
             flagTimer = 0;
         }
     }
 }
+/* */

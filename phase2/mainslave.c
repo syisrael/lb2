@@ -68,7 +68,6 @@ void showMeasurements()
 			value = getTemp(fahrenheit);
 			if(fahrenheit) {
 				if(value > 212) {
-
 					sprintf(str1,"Temp: >212F     ");
 				} else if(value < 23) {
 					sprintf(str1,"Temp: <23F      ");
