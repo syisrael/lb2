@@ -52,11 +52,11 @@ void showMeasurements()
 {
 	int value;
 
-	if(lastLCDMeasure < tCounter && tCounter % 4 == 0) {
+	if(lastLCDMeasure < tCounter && tCounter % 2 == 0) {
 		lastLCDMeasure = tCounter;
 		fahrenheit = PORTBbits.RB1; // F or C switch
 
-		if(tCounter % 8 == 0) {
+		if(tCounter % 4 == 0) {
 			value = getTemp(fahrenheit);
 			if(fahrenheit) {
 				if(value > 212) {
@@ -116,7 +116,8 @@ void showMeasurements()
 void measureCheck()
 {
 	if(timerFlag) {
-		if(tCounter % 212 == 0) {
+		//if(tCounter % 212 == 0) {
+                if(tCounter % 3 == 0) {
 			sprintf(str1,"\n\rNew measurements made.\n\r",tCounter);
 			measureTemperature();// Once every 6 min (10 times/hr)
 			measureFlowRate(); // Once every 6 min (10 times/hr)
