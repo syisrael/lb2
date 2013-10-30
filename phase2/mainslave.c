@@ -7,6 +7,7 @@
 #include "lcd.h"
 #include <stdio.h>
 #include <stdlib.h>
+#include "communications.h"
 
 #pragma config WDT=OFF              // Watchdog off
 #pragma config BOR=OFF              // Brown out reset
@@ -29,11 +30,12 @@ char str1[30] = "                ";
 char str2[30] = "                ";
 int tCounter = 0;
 
-extern char mTemp;
-extern char mCarbon;
-extern char mSalinity;
-extern char mFlowRate;
-extern char showLCD;
+char mTemp = 0;
+char mCarbon = 0;
+char mSalinity = 0;
+char mFlowRate = 0;
+//extern char showLCD;
+char showLCD = 1;
 
 
 #pragma code high_vector=0x08
@@ -146,7 +148,8 @@ void main(void)
 	while(1) {
 		showMeasurements();
                 measureCheck();
-                i2cUpdate();
+                terminalTask();
+                //i2cUpdate();
 	}
 }
 

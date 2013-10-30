@@ -7,6 +7,7 @@
 #include "lcd.h"
 #include <stdio.h>
 #include <stdlib.h>
+#include "communications.h"
 
 #pragma config WDT=OFF              // Watchdog off
 #pragma config BOR=OFF              // Brown out reset
