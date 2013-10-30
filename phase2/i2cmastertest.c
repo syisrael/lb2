@@ -1,8 +1,3 @@
-void lol() {
-
-}
-
-/* 
 #include <p18f452.h>
 #include <string.h>
 #include <stdio.h>
@@ -57,7 +52,7 @@ void setupTimer() {
                                             // SLAVE3_ADDRESS 4
                                             // SLAVE4_ADDRESS 5
                                             // SLAVE5_ADDRESS 6
-#define     I2C_CLOCK_DIVIDER           0x19   // 400 kHZ
+#define     I2C_CLOCK_DIVIDER           0x31   // 400 kHZ
 
 #define     MASTER_BUFFER_SIZE          3*2 + 1
 #define     SLAVE_BUFFER_SIZE           8*2 + 1
@@ -73,6 +68,8 @@ typedef struct { char address, command, device, measureType; } I2CCommand;
 I2CCommand i2ccmd = { 0, 0, 0, 0 };
 
 void setupI2C() {
+    TRISCbits.RC3 = 0;
+    TRISCbits.RC4 = 0;
     OpenI2C (MASTER, SLEW_OFF);
     SSPADD = I2C_CLOCK_DIVIDER;
     transmitBuffer[MASTER_BUFFER_SIZE] = '\0';
@@ -81,13 +78,12 @@ void setupI2C() {
 
 char i = 0;
 void communications() {
-    TRISCbits.RC3 = 0;
-    TRISCbits.RC4 = 0;
     if (i2ccmd.address > DEVICE_ADDRESS) {
         // Setup MASTER->SLAVE
         CloseI2C();
         IdleI2C();
         StartI2C();
+
         IdleI2C();
         do {
             status = putcI2C(i2ccmd.address << 1); // Write
@@ -142,7 +138,7 @@ void main(void)
     //setupTerminal();
     setupI2C();
     while(1) {
-        if (flagTimer = 1) {
+        if (flagTimer) {
             i2ccmd.address = 1;
             i2ccmd.command = 1;
             i2ccmd.device = 1;
@@ -152,4 +148,3 @@ void main(void)
         }
     }
 }
-/* */
