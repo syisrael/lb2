@@ -46,13 +46,15 @@ void setupTimer() {
 #define     MAX_RETRY_ATTEMPTS          10
 #define     MAX_WAITTIME                5   // seconds
 #define     DEVICE_ADDRESS              0   // MASTER_ADDRESS 0
-                                            // SLAVE0_ADDRESS 1
-                                            // SLAVE1_ADDRESS 2
-                                            // SLAVE2_ADDRESS 3
-                                            // SLAVE3_ADDRESS 4
-                                            // SLAVE4_ADDRESS 5
-                                            // SLAVE5_ADDRESS 6
-#define     I2C_CLOCK_DIVIDER           0x31   // 400 kHZ
+                                            // SLAVE0_ADDRESS A1
+                                            // SLAVE1_ADDRESS A2
+                                            // SLAVE2_ADDRESS A3
+                                            // SLAVE3_ADDRESS A4
+                                            // SLAVE4_ADDRESS A5
+                                            // SLAVE5_ADDRESS A6
+#define     Fosc                        20000000
+#define     Fi2c                        100000
+#define     I2C_CLOCK_DIVIDER           (Fosc/Fi2c)/4-1   // (Fosc/Fi2c)/4-1
 
 #define     MASTER_BUFFER_SIZE          3*2 + 1
 #define     SLAVE_BUFFER_SIZE           8*2 + 1
@@ -64,10 +66,12 @@ unsigned char transmitBuffer[MASTER_BUFFER_SIZE];
 unsigned char receiveBuffer[SLAVE_BUFFER_SIZE];
 short status = 0;
 
-typedef struct { char address, command, device, measureType; } I2CCommand;
+typedef struct { char address, command, measureType, fetchCount; } I2CCommand;
 I2CCommand i2ccmd = { 0, 0, 0, 0 };
 
 void setupI2C() {
+    TRISC = 0x00;
+    PORTC = 0x00;
     TRISCbits.RC3 = 0;
     TRISCbits.RC4 = 0;
     OpenI2C (MASTER, SLEW_OFF);
@@ -78,30 +82,50 @@ void setupI2C() {
 
 char i = 0;
 void communications() {
-    if (i2ccmd.address > DEVICE_ADDRESS) {
+    if (i2ccmd.address != DEVICE_ADDRESS) {
         // Setup MASTER->SLAVE
-        CloseI2C();
-        IdleI2C();
+
+        PORTCbits.RC0 = 1;
         StartI2C();
-
+        PORTCbits.RC0 = 0;
         IdleI2C();
-        do {
-            status = putcI2C(i2ccmd.address << 1); // Write
-
+        //StopI2C();
+        //IdleI2C();
+        /*i = SSPBUF;
+        IdleI2C();
+        SSPBUF = (0xa1 << 1) | 0x00;
+        while( SSPSTATbits.BF );   // wait until write cycle is complete
+        IdleI2C();                 // ensure module is idle
+        if ( SSPCON2bits.ACKSTAT ) { // test for ACK condition received
+            PORTCbits.RC2 = 1;
+        } else {
+            PORTCbits.RC0 = 1;
+        }
+        
+        /*do {
+            PORTCbits.RC1 = 1;
+            SSPBUF = (0xa1 << 1) | 0x00;
+            //status = WriteI2C((0xa1 << 1) | 0x00); // Write
+            PORTCbits.RC2 = 1;
             if (status == -1) {
                 getcI2C();
                 SSPCON1bits.WCOL = 0b0;
             }
-        } while (status != 0);
+        } while (status != 0);*/
+        /*PORTCbits.RC1 = 0;
+        PORTCbits.RC2 = 0;
+        PORTCbits.RC0 = 0;
         // TX from MASTER->SLAVE
         for (i = 0; i < MASTER_BUFFER_SIZE; transmitBuffer[i++] = 0);
+        
         transmitBuffer[0] = i2ccmd.command;
         transmitBuffer[1] = i2ccmd.measureType;
-        transmitBuffer[2] = i2ccmd.device;
+        transmitBuffer[2] = i2ccmd.fetchCount;
         transmitBuffer[3] = ~i2ccmd.command;
         transmitBuffer[4] = ~i2ccmd.measureType;
-        transmitBuffer[5] = ~i2ccmd.device;
+        transmitBuffer[5] = ~i2ccmd.fetchCount;
         while (putsI2C(transmitBuffer) != 0);
+        PORTCbits.RC0 = 0;
 
         // Setup MASTER<-SLAVE
         IdleI2C();
@@ -126,7 +150,7 @@ void communications() {
         } while (status != 0xffff);
         NotAckI2C();
         while (SSPCON2bits.ACKEN != 0);
-        StopI2C();
+        StopI2C();*/
 
         //Handle valid data in receiveBuffer 0-15
     }    
@@ -134,16 +158,17 @@ void communications() {
 
 void main(void)
 {
+    i2ccmd.address = 0xa1;
+    i2ccmd.command = 1;
+    i2ccmd.measureType = 1;
+    i2ccmd.fetchCount = 1;
     setupTimer();
     //setupTerminal();
     setupI2C();
     while(1) {
+        communications();
         if (flagTimer) {
-            i2ccmd.address = 1;
-            i2ccmd.command = 1;
-            i2ccmd.device = 1;
-            i2ccmd.measureType = 1;
-            communications();
+            
             flagTimer = 0;
         }
     }
