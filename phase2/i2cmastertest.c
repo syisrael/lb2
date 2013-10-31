@@ -70,10 +70,6 @@ typedef struct { char address, command, measureType, fetchCount; } I2CCommand;
 I2CCommand i2ccmd = { 0, 0, 0, 0 };
 
 void setupI2C() {
-    TRISC = 0x00;
-    PORTC = 0x00;
-    TRISCbits.RC3 = 0;
-    TRISCbits.RC4 = 0;
     OpenI2C (MASTER, SLEW_OFF);
     SSPADD = I2C_CLOCK_DIVIDER;
     transmitBuffer[MASTER_BUFFER_SIZE] = '\0';
@@ -84,39 +80,14 @@ char i = 0;
 void communications() {
     if (i2ccmd.address != DEVICE_ADDRESS) {
         // Setup MASTER->SLAVE
-
-        PORTCbits.RC0 = 1;
         StartI2C();
-        PORTCbits.RC0 = 0;
         IdleI2C();
-        //StopI2C();
-        //IdleI2C();
-        /*i = SSPBUF;
-        IdleI2C();
-        SSPBUF = (0xa1 << 1) | 0x00;
-        while( SSPSTATbits.BF );   // wait until write cycle is complete
-        IdleI2C();                 // ensure module is idle
-        if ( SSPCON2bits.ACKSTAT ) { // test for ACK condition received
-            PORTCbits.RC2 = 1;
-        } else {
-            PORTCbits.RC0 = 1;
+        WriteI2C(i2ccmd.address);
+        // TX from MASTER->SLAVE
+        for (i = 0; i < MASTER_BUFFER_SIZE; i++) {
+            transmitBuffer[i] = 0;
         }
         
-        /*do {
-            PORTCbits.RC1 = 1;
-            SSPBUF = (0xa1 << 1) | 0x00;
-            //status = WriteI2C((0xa1 << 1) | 0x00); // Write
-            PORTCbits.RC2 = 1;
-            if (status == -1) {
-                getcI2C();
-                SSPCON1bits.WCOL = 0b0;
-            }
-        } while (status != 0);*/
-        /*PORTCbits.RC1 = 0;
-        PORTCbits.RC2 = 0;
-        PORTCbits.RC0 = 0;
-        // TX from MASTER->SLAVE
-        for (i = 0; i < MASTER_BUFFER_SIZE; transmitBuffer[i++] = 0);
         
         transmitBuffer[0] = i2ccmd.command;
         transmitBuffer[1] = i2ccmd.measureType;
@@ -125,7 +96,6 @@ void communications() {
         transmitBuffer[4] = ~i2ccmd.measureType;
         transmitBuffer[5] = ~i2ccmd.fetchCount;
         while (putsI2C(transmitBuffer) != 0);
-        PORTCbits.RC0 = 0;
 
         // Setup MASTER<-SLAVE
         IdleI2C();
@@ -133,7 +103,8 @@ void communications() {
         IdleI2C();
         getcI2C();
         do {
-            status = WriteI2C((i2ccmd.address << 1) | 0b1); // Read
+            //status = WriteI2C((i2ccmd.address << 1) | 0b1); // Read
+            status = WriteI2C(i2ccmd.address); // Read
             
             if (status == -1) {
                 getcI2C();
@@ -150,7 +121,7 @@ void communications() {
         } while (status != 0xffff);
         NotAckI2C();
         while (SSPCON2bits.ACKEN != 0);
-        StopI2C();*/
+        StopI2C();
 
         //Handle valid data in receiveBuffer 0-15
     }    
@@ -165,11 +136,11 @@ void main(void)
     setupTimer();
     //setupTerminal();
     setupI2C();
-    while(1) {
+    //while(1) {
         communications();
         if (flagTimer) {
             
             flagTimer = 0;
         }
-    }
+    //}
 }
