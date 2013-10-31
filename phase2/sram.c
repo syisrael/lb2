@@ -187,7 +187,7 @@ void main() {
     }*/
     
     while(1) {
-        for (i = 0; i < 16; writeSRAM(0, i++));
+        for (i = 0; i < 16; writeSRAM(0, 3));
         for (i = 0; i < 32; i+=2){
 			readSRAM(0, i);
 		}
