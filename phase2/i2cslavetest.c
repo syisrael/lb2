@@ -48,14 +48,14 @@ void setupTimer() {
 
 #define     MAX_RETRY_ATTEMPTS          10
 #define     MAX_WAITTIME                5   // seconds
-#define     DEVICE_ADDRESS              1   // MASTER_ADDRESS 0
+#define     DEVICE_ADDRESS              0xa1   // MASTER_ADDRESS 0
                                             // SLAVE0_ADDRESS 1
                                             // SLAVE1_ADDRESS 2
                                             // SLAVE2_ADDRESS 3
                                             // SLAVE3_ADDRESS 4
                                             // SLAVE4_ADDRESS 5
                                             // SLAVE5_ADDRESS 6
-#define     I2C_CLOCK_DIVIDER           0x19   // 400 kHZ
+#define     I2C_CLOCK_DIVIDER           0x31   // 400 kHZ
 
 #define     MASTER_BUFFER_SIZE          3*2 + 1
 #define     SLAVE_BUFFER_SIZE           7*2 + 1
@@ -71,54 +71,48 @@ typedef struct { char address, command, device, measureType; } I2CCommand;
 I2CCommand i2ccmd = { 0, 0, 0, 0 };
 
 void setupI2C() {
-    TRISCbits.RC3 = 1;
-    TRISCbits.RC4 = 1;
-    OpenI2C (SLAVE_7, SLEW_OFF);
-    SSPADD = I2C_CLOCK_DIVIDER;
+    OpenI2C (SLAVE_7, SLEW_ON);
+    SSPCON1bits.CKP = 1;
+    SSPADD = DEVICE_ADDRESS;
     transmitBuffer[SLAVE_BUFFER_SIZE] = '\0';
     receiveBuffer[MASTER_BUFFER_SIZE] = '\0';
 }
 
 char i = 0;
 void communications() {
-
-    if (i2ccmd.address > DEVICE_ADDRESS) {
-        // Setup SLAVE<-MASTER
-        //StartI2C();
-        if (DataRdyI2C()) {
-            status = getcI2C();
-            // say processing
-            terminalSendPString("Processing\n\r");
-            if (status == DEVICE_ADDRESS) {
-                // say reading message
-                terminalSendPString("Reading Message\n\r");
-                do {
-                    status = 0;
-                    while (getsI2C(receiveBuffer, MASTER_BUFFER_SIZE));
-                    for (i = 0; i < MASTER_BUFFER_SIZE / 2; i++) {
-                        status |= (receiveBuffer[i] == ~receiveBuffer[MASTER_BUFFER_SIZE / 2 + i]) << i;
-                    }
-                    if (status != 0b00000111) {
-                        NotAckI2C();
-                    }
-                } while (status != 0b00000111);
-                // say some bit thing
-                terminalSendPString("Some Bit Thing\n\r");
-                while (SSPSTATbits.S != 1);
-                // listening again
-                terminalSendPString("Listening Again\n\r");
-                while (DataRdyI2C() == 0);
-                getcI2C();
-                // say receiving buffer
-                terminalSendPString("Receiving Buffer\n\r");
-                if (SSPSTAT & 0x04) {
-                    while (putsI2C(transmitBuffer));
-                }
-                // print contents to usart
-                terminalSendPString("Print Contents To USART\n\r");
+    // Setup SLAVE<-MASTER
+    if (DataRdyI2C()) {
+        status = getcI2C();
+        AckI2C();
+    // say processing
+    terminalSendPString("Processing\n\r");
+        // say reading message
+        terminalSendPString("Reading Message\n\r");
+        do {
+            status = 0;
+            while (getsI2C(receiveBuffer, MASTER_BUFFER_SIZE));
+            for (i = 0; i < MASTER_BUFFER_SIZE / 2; i++) {
+                status |= (receiveBuffer[i] == ~receiveBuffer[MASTER_BUFFER_SIZE / 2 + i]) << i;
             }
+            if (status != 0b00000111) {
+                NotAckI2C();
+            }
+        } while (status != 0b00000111);
+        // say some bit thing
+        terminalSendPString("Some Bit Thing\n\r");
+        while (SSPSTATbits.S != 1);
+        // listening again
+        terminalSendPString("Listening Again\n\r");
+        while (DataRdyI2C() == 0);
+        getcI2C();
+        // say receiving buffer
+        terminalSendPString("Receiving Buffer\n\r");
+        if (SSPSTAT & 0x04) {
+            while (putsI2C(transmitBuffer));
         }
-    }    
+        // print contents to usart
+        terminalSendPString("Print Contents To USART\n\r");
+    }
 }
 
 void main(void)
@@ -126,9 +120,10 @@ void main(void)
     setupTimer();
     setupTerminal();
     setupI2C();
+
     while(1) {
         if (flagTimer) {
-            terminalSendPString("Tick\n\r");
+            terminalSendPString("Tick\r\n");
             i2ccmd.address = 1;
             i2ccmd.command = 1;
             i2ccmd.device = 1;
@@ -138,4 +133,3 @@ void main(void)
         }
     }
 }
-/* */

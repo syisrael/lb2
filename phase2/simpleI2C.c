@@ -6,6 +6,7 @@
 
 #include <i2c.h>
 
+
 #pragma config WDT=OFF              // Watchdog off
 #pragma config BOR=OFF              // Brown out reset
 #pragma config LVP=OFF              //
@@ -15,7 +16,6 @@
 #pragma config CP3=OFF              // Code protection
 #pragma config CPB=OFF              // Boot
 #pragma config WRTC=OFF             // Configuration Register Write Protection
-#pragma config OSC = XT     
 
 #define     MAX_RETRY_ATTEMPTS          10
 #define     MAX_WAITTIME                5   // seconds
