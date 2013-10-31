@@ -62,7 +62,7 @@ void setupTimer() {
 int retryAttempts = 0;
 int errors = 0;
 int referenceTimer = 0;
-unsigned char transmitBuffer[MASTER_BUFFER_SIZE];
+unsigned char transmitBuffer[MASTER_BUFFER_SIZE] = "abcdef";
 unsigned char receiveBuffer[SLAVE_BUFFER_SIZE];
 short status = 0;
 
@@ -76,71 +76,33 @@ void setupI2C() {
     receiveBuffer[SLAVE_BUFFER_SIZE] = '\0';
 }
 
+char str[] = {'a', 'b', 'c', 'd', '\0'};
 char i = 0;
+char data = 'U';
 void communications() {
-    if (i2ccmd.address != DEVICE_ADDRESS) {
-        // Setup MASTER->SLAVE
-        StartI2C();
-        IdleI2C();
-        WriteI2C(i2ccmd.address);
-        // TX from MASTER->SLAVE
-        for (i = 0; i < MASTER_BUFFER_SIZE; i++) {
-            transmitBuffer[i] = 0;
-        }
-        
-        
-        transmitBuffer[0] = i2ccmd.command;
-        transmitBuffer[1] = i2ccmd.measureType;
-        transmitBuffer[2] = i2ccmd.fetchCount;
-        transmitBuffer[3] = ~i2ccmd.command;
-        transmitBuffer[4] = ~i2ccmd.measureType;
-        transmitBuffer[5] = ~i2ccmd.fetchCount;
-        while (putsI2C(transmitBuffer) != 0);
-
-        // Setup MASTER<-SLAVE
-        IdleI2C();
-        RestartI2C();
-        IdleI2C();
-        getcI2C();
-        do {
-            //status = WriteI2C((i2ccmd.address << 1) | 0b1); // Read
-            status = WriteI2C(i2ccmd.address); // Read
-            
-            if (status == -1) {
-                getcI2C();
-                SSPCON1bits.WCOL = 0b0;
-            }
-        } while (status != 0);
-        // RX from MASTER<-SLAVE
-        do {
-            status = 0;
-            while (getsI2C(receiveBuffer, SLAVE_BUFFER_SIZE));
-            for (i = 0; i < SLAVE_BUFFER_SIZE / 2; i++) {
-                status |= (receiveBuffer[i] == ~receiveBuffer[SLAVE_BUFFER_SIZE / 2 + i]) << i;
-            }
-        } while (status != 0xffff);
-        NotAckI2C();
-        while (SSPCON2bits.ACKEN != 0);
-        StopI2C();
-
-        //Handle valid data in receiveBuffer 0-15
-    }    
+    StartI2C();
+    IdleI2C();
+    putcI2C(i2ccmd.address);
+    IdleI2C();
+    putcI2C(i2ccmd.command++);
+    IdleI2C();
+    StopI2C();
 }
 
 void main(void)
 {
-    i2ccmd.address = 0xa1;
-    i2ccmd.command = 1;
+    i2ccmd.address = 0xb0;
+    i2ccmd.command = 'u';
     i2ccmd.measureType = 1;
     i2ccmd.fetchCount = 1;
     setupTimer();
     //setupTerminal();
     setupI2C();
-    //while(1) {
+    while(1) {
         communications();
         if (flagTimer) {
-            
+            //communications();
             flagTimer = 0;
         }
-    //}
+    }
 }

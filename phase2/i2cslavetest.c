@@ -27,9 +27,9 @@ int tCounter = 0;
 char flagTimer = 0;
 void timer_isr (void)
 {
-	INTCONbits.TMR0IF = 0;
-	tCounter++;
-        flagTimer = 1;
+    INTCONbits.TMR0IF = 0;
+    tCounter++;
+    flagTimer = 1;
 }
 
 #pragma code high_vector=0x08
@@ -48,7 +48,7 @@ void setupTimer() {
 
 #define     MAX_RETRY_ATTEMPTS          10
 #define     MAX_WAITTIME                5   // seconds
-#define     DEVICE_ADDRESS              0xa1   // MASTER_ADDRESS 0
+#define     DEVICE_ADDRESS              0xb0   // MASTER_ADDRESS 0
                                             // SLAVE0_ADDRESS 1
                                             // SLAVE1_ADDRESS 2
                                             // SLAVE2_ADDRESS 3
@@ -71,65 +71,81 @@ typedef struct { char address, command, device, measureType; } I2CCommand;
 I2CCommand i2ccmd = { 0, 0, 0, 0 };
 
 void setupI2C() {
-    OpenI2C (SLAVE_7, SLEW_ON);
-    SSPCON1bits.CKP = 1;
+    OpenI2C (SLAVE_7, SLEW_OFF);
+    SSPCON1 |= 16;
+    //SSPCON1bits.CKP = 1;
     SSPADD = DEVICE_ADDRESS;
     transmitBuffer[SLAVE_BUFFER_SIZE] = '\0';
     receiveBuffer[MASTER_BUFFER_SIZE] = '\0';
 }
 
 char i = 0;
+char str[20];
+char addr, data = 'q';
 void communications() {
     // Setup SLAVE<-MASTER
+
     if (DataRdyI2C()) {
-        status = getcI2C();
+        data = ReadI2C(); // addresses the chip with a read bit
+        WriteI2C(data++);
+        while (!DataRdyI2C());
+        data = ReadI2C(); // addresses the chip with a read bit
+        IdleI2C();
+        WriteI2C(data); // addresses the chip with a read bit
+        IdleI2C();
+    }
+
+    /*if (DataRdyI2C()) {
+        addr = ReadI2C();
         AckI2C();
-    // say processing
-    terminalSendPString("Processing\n\r");
-        // say reading message
-        terminalSendPString("Reading Message\n\r");
-        do {
-            status = 0;
-            while (getsI2C(receiveBuffer, MASTER_BUFFER_SIZE));
-            for (i = 0; i < MASTER_BUFFER_SIZE / 2; i++) {
-                status |= (receiveBuffer[i] == ~receiveBuffer[MASTER_BUFFER_SIZE / 2 + i]) << i;
-            }
-            if (status != 0b00000111) {
-                NotAckI2C();
-            }
-        } while (status != 0b00000111);
-        // say some bit thing
+        IdleI2C();
+        data = ReadI2C();
+        NAckI2C();
+        IdleI2C();
+        /*getcI2C();
+        AckI2C();
+        IdleI2C();
+        getsI2C(receiveBuffer, MASTER_BUFFER_SIZE);
+        IdleI2C();
+        AckI2C();
+        sprintf(str, "%s", receiveBuffer);
+        terminalSendPString("Printing contents:\r\n");
+        terminalSendString(str);
+        terminalSendPString("Done\r\n");
+        IdleI2C();
+        NotAckI2C();
+        IdleI2C();*/
+        /*getsI2C(receiveBuffer, MASTER_BUFFER_SIZE);
+        for (i = 0; i < MASTER_BUFFER_SIZE / 2; i++) {
+            status |= (receiveBuffer[i] == ~receiveBuffer[MASTER_BUFFER_SIZE / 2 + i]) << i;
+        }
         terminalSendPString("Some Bit Thing\n\r");
-        while (SSPSTATbits.S != 1);
-        // listening again
         terminalSendPString("Listening Again\n\r");
-        while (DataRdyI2C() == 0);
+        while (!DataRdyI2C());
         getcI2C();
-        // say receiving buffer
         terminalSendPString("Receiving Buffer\n\r");
         if (SSPSTAT & 0x04) {
             while (putsI2C(transmitBuffer));
         }
-        // print contents to usart
-        terminalSendPString("Print Contents To USART\n\r");
-    }
+        terminalSendPString("Print Contents To USART\n\r");*/
+    //}
 }
 
+char asdf = 'a';
 void main(void)
 {
     setupTimer();
     setupTerminal();
     setupI2C();
-
+    putrsUSART("running");
     while(1) {
         if (flagTimer) {
-            terminalSendPString("Tick\r\n");
-            i2ccmd.address = 1;
-            i2ccmd.command = 1;
-            i2ccmd.device = 1;
-            i2ccmd.measureType = 1;
+            while (BusyUSART());
+            putcUSART(asdf++);
             communications();
             flagTimer = 0;
+
+            if (asdf > 'z') asdf = 'a';
         }
     }
 }
