@@ -1,7 +1,8 @@
 /* Compile options:  -ml (Large code model) */
 //#include <p18f452.h>
 //#include <p18f25k22.h>
-#include <p18f452.h>
+//#include <p18f452.h>
+#include <p18f4585.h>
 #include <usart.h>
 #include <timers.h>
 #include <ctype.h>
@@ -18,7 +19,8 @@ typedef enum  { false = 0, true = 1 } boolean;
 
 char buffer[40];
 char cmd;
-extern char fahrenheit;
+//extern char fahrenheit;
+char fahrenheit = 0;
 
 void terminalSendPString(char *str) {
     while(BusyUSART());
@@ -50,28 +52,28 @@ void updateTerminal() {
 
     // Carbon
     terminalSendPString("    Carbon:       ");
-    sprintf(buffer, TERMINAL_NUMBER_FORMAT, getCarbon());
+    //sprintf(buffer, TERMINAL_NUMBER_FORMAT, getCarbon());
     terminalSendString(buffer);
     terminalSendPString(" ppm");
     terminalSendPString(TERMINAL_RETURN);
 
     // Salinity
     terminalSendPString("    Salinity:     ");
-    sprintf(buffer, TERMINAL_NUMBER_FORMAT, getSalinity());
+    //sprintf(buffer, TERMINAL_NUMBER_FORMAT, getSalinity());
     terminalSendString(buffer);
     terminalSendPString(" ppt");
     terminalSendPString(TERMINAL_RETURN);
 
     // Flow Rate
     terminalSendPString("    Flow Rate:    ");
-    sprintf(buffer, TERMINAL_NUMBER_FORMAT, getFlowRate());
+    //sprintf(buffer, TERMINAL_NUMBER_FORMAT, getFlowRate());
     terminalSendString(buffer);
     terminalSendPString(" Lps");
     terminalSendPString(TERMINAL_RETURN);
 
     // Temperature
     terminalSendPString("    Temperature:  ");
-    sprintf(buffer, TERMINAL_NUMBER_FORMAT, getTemp(fahrenheit));
+    //sprintf(buffer, TERMINAL_NUMBER_FORMAT, getTemp(fahrenheit));
     if (fahrenheit) {
         terminalSendString(buffer);
         terminalSendPString(" F");
@@ -121,28 +123,28 @@ void terminalTask() {
         case '1':
             terminalSendPString(TERMINAL_RETURN);
             terminalSendPString("Measuring carbon...");
-            measureCarbon();
+            //measureCarbon();
             terminalSendPString(TERMINAL_RETURN);
             updateTerminal();
             break;
         case '2':
             terminalSendPString(TERMINAL_RETURN);
             terminalSendPString("Measuring salinity...");
-            measureSalinity();
+            //measureSalinity();
             terminalSendPString(TERMINAL_RETURN);
             updateTerminal();
             break;
         case '3':
             terminalSendPString(TERMINAL_RETURN);
             terminalSendPString("Measuring flow rate...");
-            measureFlowRate();
+            //measureFlowRate();
             terminalSendPString(TERMINAL_RETURN);
             updateTerminal();
             break;
         case '4':
             terminalSendPString(TERMINAL_RETURN);
             terminalSendPString("Measuring temperature...");
-            measureTemperature();
+            //measureTemperature();
             terminalSendPString(TERMINAL_RETURN);
             updateTerminal();
             break;
