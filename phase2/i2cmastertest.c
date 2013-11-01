@@ -1,4 +1,5 @@
-#include <p18f452.h>
+//#include <p18f452.h>
+#include <p18f4585.h>
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -8,12 +9,12 @@
 #include <i2c.h>
 
 #pragma config WDT=OFF              // Watchdog off
-#pragma config BOR=OFF              // Brown out reset
+//#pragma config BOR=OFF              // Brown out reset
 #pragma config LVP=OFF              //
 #pragma config CP0=OFF              // Code protection
 #pragma config CP1=OFF              // Code protection
 #pragma config CP2=OFF              // Code protection
-#pragma config CP3=OFF              // Code protection
+//#pragma config CP3=OFF              // Code protection
 #pragma config CPB=OFF              // Boot
 #pragma config WRTC=OFF             // Configuration Register Write Protection
 
@@ -25,9 +26,6 @@ void Delay10TCYx(unsigned char);
 void Delay100TCY(unsigned char);
 void Delay1KTCYx(unsigned char);
 void Delay10KTCY(unsigned char);
-void I2CDelay(void);
-void I2CStop(void);
-void I2CStart(void);
 unsigned char I2CPut(unsigned char);
 unsigned char I2CGet(char);
 
@@ -38,12 +36,8 @@ void timer_isr (void)
 {
     if (PIR1bits.SSPIF) {
         if (SSPSTATbits.BF) {
-            x = SSPBUF;
-
             if (SSPSTATbits.R_NOT_W) {
-                
-            } else {
-
+                x = SSPBUF;
             }
         }
 
@@ -97,15 +91,31 @@ short status = 0;
 typedef struct { char address, command, measureType, fetchCount; } I2CCommand;
 I2CCommand i2ccmd = { 0, 0, 0, 0 };
 
+char b = 'a';
+
 void communications() {
     StartI2C();
     IdleI2C();
     WriteI2C(0xb0);
     IdleI2C();
-    WriteI2C('U');
+    WriteI2C(b++);
+    if (b > 'z') b = 'a';
     IdleI2C();
     StopI2C();
     IdleI2C();
+
+    StartI2C();
+    IdleI2C();
+    WriteI2C(0xb1);
+    IdleI2C();
+    b = ReadI2C();
+    b--;
+    IdleI2C();
+    NotAckI2C();
+    IdleI2C();
+    StopI2C();
+    IdleI2C();
+
     Delay1KTCYx(1);
 }
 
@@ -117,12 +127,12 @@ void main(void)
     i2ccmd.fetchCount = 1;
     setupTimer();
     //setupTerminal();
-
+    receiveBuffer[3] = '\0';
     PIE1bits.SSPIE = 1;
     PIR1bits.SSPIF = 1;
 
     OpenI2C(MASTER, SLEW_OFF);
-    SSPADD = 0x31;
+    SSPADD = 0x09;
 
     while(1) {
         communications();

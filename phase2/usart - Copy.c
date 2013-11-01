@@ -2,7 +2,8 @@
 //#include <p18f452.h>
 //#include <p18f25k22.h>
 //#include <p18f452.h>
-#include <p18f452.h>
+//#include <p18f452.h>
+#include <p18f4620.h>
 //#include <p18f4585.h>
 #include <usart.h>
 #include <timers.h>

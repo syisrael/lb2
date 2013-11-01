@@ -29,34 +29,38 @@ int tCounter = 0;
 char flagTimer = 0, flagPrint = 0;
 char damnit = 0, blah = 'a';
 
-unsigned char rxBuffer[50] = "jklmnop";
-unsigned char txBuffer[50] = "ghjkl";
+unsigned char rxBuffer[50];
+unsigned char txBuffer[50] = "zxcvlol";
 unsigned short i = 0;
 unsigned short j = 0;
 char x = '0';
 char flagStart = 0;
-char rx = 'a';
 
 #define PIN_X PORTBbits.RB2
-
 
 void high_isr (void)
 {
     if(PIR1bits.SSPIF == 1) //if MSSP interrupt
     {
         SSPCON1bits.CKP = 1;
-        if (SSPSTATbits.R_NOT_W) {
-            SSPCON1bits.CKP = 0;
-            SSPBUF = rx;
-            //SSPBUF = txBuffer[j];
-            //SSPBUF = rxBuffer[0];
-            //j = (j + 1) % 4;
-            SSPCON1bits.CKP = 1;
-        } else if (SSPSTATbits.S && SSPSTATbits.BF && !SSPSTATbits.R_NOT_W && SSPSTATbits.D_NOT_A) {
-            x = SSPBUF;
-            rx = x + 1;
-            //rxBuffer[0] = x + 1;
-            //i = (i + 1) % 4;
+        if (SSPSTATbits.S && SSPSTATbits.BF) {
+            i = SSPBUF;
+            if (SSPSTATbits.D_NOT_A) {
+                if (SSPSTATbits.R_NOT_W) {
+                    
+                    for (j=0;j<8;j++) {
+                        SSPCON1bits.CKP = 0;
+                        SSPBUF = txBuffer[j];
+                        SSPCON1bits.CKP = 1;
+                    }
+                    
+                } else {
+                    rxBuffer[i++] = SSPBUF;
+                }
+            } else {
+                i = 0;
+            }
+            flagStart = 1;
         }
         /*if (SSPSTATbits.S && SSPSTATbits.BF && !SSPSTATbits.D_NOT_A) {
             PIN_X = ~PIN_X;
@@ -159,6 +163,10 @@ void main(void)
     putrsUSART("running\r\n");
     while(1) {
         communications();
+        if (flagPrint) {
+            terminalSendString(rxBuffer);
+            flagPrint = 0;
+        }
         if (flagTimer) {
             while (BusyUSART());
             putcUSART(asdf++);

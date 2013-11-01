@@ -1,4 +1,5 @@
 #include <p18f452.h>
+//#include <p18f4585.h>
 #include <string.h>
 #include <delays.h>
 #include <timers.h>
@@ -116,8 +117,8 @@ void showMeasurements()
 void measureCheck()
 {
 	if(timerFlag) {
-		//if(tCounter % 212 == 0) {
-                if(tCounter % 3 == 0) {
+		if(tCounter % 212 == 0) {
+                //if(tCounter % 3 == 0) {
 			sprintf(str1,"\n\rNew measurements made.\n\r",tCounter);
 			measureTemperature();// Once every 6 min (10 times/hr)
 			measureFlowRate(); // Once every 6 min (10 times/hr)

@@ -1,4 +1,5 @@
-#include <p18f452.h>
+//#include <p18f452.h>
+#include <p18f4620.h>
 #include <delays.h>
 #include <adc.h>
 #include <timers.h>
@@ -35,7 +36,7 @@ void measureCarbon()
 
 	//Perform Measurement and convert to correct format
 	//Choose a channel adc channel AN1
-    OpenADC(ADC_FOSC_4 & ADC_RIGHT_JUST & ADC_8ANA_0REF , ADC_CH1 & ADC_INT_OFF);
+//    OpenADC(ADC_FOSC_4 & ADC_RIGHT_JUST & ADC_8ANA_0REF , ADC_CH1 & ADC_INT_OFF);
     SetChanADC(ADC_CH1);
     Delay10KTCYx(5);
     ConvertADC();
@@ -92,7 +93,7 @@ void measureSalinity()
 	measureOn = 1;
 
 	//Perform Measurement and convert to correct format  on AN0
-    OpenADC(ADC_FOSC_4 & ADC_RIGHT_JUST & ADC_8ANA_0REF , ADC_CH0 & ADC_INT_OFF);
+   // OpenADC(ADC_FOSC_4 & ADC_RIGHT_JUST & ADC_8ANA_0REF , ADC_CH0 & ADC_INT_OFF);
     SetChanADC(ADC_CH0);
     Delay10KTCYx(5);
     ConvertADC();
@@ -108,7 +109,7 @@ void measureTemperature()
     int i;
     for(i=0;i<5;i++){
             // perform measurement on AN5 note that AN3 is the +Vref signal and is 7 volts
-        OpenADC(ADC_FOSC_4 & ADC_RIGHT_JUST & ADC_8ANA_0REF , ADC_CH5 & ADC_INT_OFF);
+        //OpenADC(ADC_FOSC_4 & ADC_RIGHT_JUST & ADC_8ANA_0REF , ADC_CH5 & ADC_INT_OFF);
         SetChanADC(ADC_CH5);
         Delay10KTCYx(5);
         ConvertADC();
