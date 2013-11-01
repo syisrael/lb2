@@ -3,7 +3,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <timers.h>
-#include <delays.h>
 
 #include <i2c.h>
 
@@ -20,41 +19,16 @@
 void setupTimer(void);
 void setupI2C(void);
 void communications(void);
-void DelayTCY(unsigned char);
-void Delay10TCYx(unsigned char);
-void Delay100TCY(unsigned char);
-void Delay1KTCYx(unsigned char);
-void Delay10KTCY(unsigned char);
-void I2CDelay(void);
-void I2CStop(void);
-void I2CStart(void);
 unsigned char I2CPut(unsigned char);
 unsigned char I2CGet(char);
 
 int tCounter = 0;
 char flagTimer = 0;
-char x;
 void timer_isr (void)
 {
-    if (PIR1bits.SSPIF) {
-        if (SSPSTATbits.BF) {
-            x = SSPBUF;
-
-            if (SSPSTATbits.R_NOT_W) {
-                
-            } else {
-
-            }
-        }
-
-        PIR1bits.SSPIF = 0;
-    }
-
-    if (INTCONbits.TMR0IF) {
-        INTCONbits.TMR0IF = 0;
-        tCounter++;
+	INTCONbits.TMR0IF = 0;
+	tCounter++;
         flagTimer = 1;
-    }
 }
 
 #pragma code high_vector=0x08
@@ -97,16 +71,44 @@ short status = 0;
 typedef struct { char address, command, measureType, fetchCount; } I2CCommand;
 I2CCommand i2ccmd = { 0, 0, 0, 0 };
 
+void setupI2C() {
+    OpenI2C (MASTER, SLEW_OFF);
+    SSPCON1bits.SSPEN = 1;
+    SSPCON2 = 0xff;
+    SSPADD = 0x31;
+    transmitBuffer[SLAVE_BUFFER_SIZE] = '\0';
+    receiveBuffer[MASTER_BUFFER_SIZE] = '\0';
+}
+
+char data = 'c', dump;
 void communications() {
     StartI2C();
     IdleI2C();
-    WriteI2C(0xb0);
+    WriteI2C(i2ccmd.address);
     IdleI2C();
-    WriteI2C('U');
+    WriteI2C(~i2ccmd.command);
+    IdleI2C();
+    WriteI2C(i2ccmd.command++);
+    IdleI2C();
+    WriteI2C(i2ccmd.command--);
     IdleI2C();
     StopI2C();
     IdleI2C();
-    Delay1KTCYx(1);
+    Delay1KTCYx(5);
+    StartI2C();
+    IdleI2C();
+    WriteI2C(i2ccmd.address + 1);
+    IdleI2C();
+    if (DataRdyI2C()) {
+        dump = SSPBUF;
+        AckI2C();
+        dump = SSPBUF;
+        NotAckI2C();
+    }
+    IdleI2C();
+    StopI2C();
+    IdleI2C();
+    Delay1KTCYx(5);
 }
 
 void main(void)
@@ -117,13 +119,7 @@ void main(void)
     i2ccmd.fetchCount = 1;
     setupTimer();
     //setupTerminal();
-
-    PIE1bits.SSPIE = 1;
-    PIR1bits.SSPIF = 1;
-
-    OpenI2C(MASTER, SLEW_OFF);
-    SSPADD = 0x31;
-
+    setupI2C();
     while(1) {
         communications();
         if (flagTimer) {

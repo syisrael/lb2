@@ -1,7 +1,5 @@
 /* */
-//#include <p18f452.h>
-//#include <p18f452.h>
-#include <p18f4620.h>
+#include <p18f452.h>
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -11,12 +9,12 @@
 #include <usart.h>
 
 #pragma config WDT=OFF              // Watchdog off
-//#pragma config BOR=OFF              // Brown out reset
+#pragma config BOR=OFF              // Brown out reset
 #pragma config LVP=OFF              //
 #pragma config CP0=OFF              // Code protection
 #pragma config CP1=OFF              // Code protection
 #pragma config CP2=OFF              // Code protection
-//#pragma config CP3=OFF              // Code protection
+#pragma config CP3=OFF              // Code protection
 #pragma config CPB=OFF              // Boot
 #pragma config WRTC=OFF             // Configuration Register Write Protection
 
@@ -33,12 +31,9 @@ unsigned char rxBuffer[50];
 unsigned short i = 0;
 char x = '0';
 char flagStart = 0;
-
-#define PIN_X PORTBbits.RB0
-
 void high_isr (void)
 {
-    if(PIR1bits.SSPIF == 1) //if MSSP interrupt
+    /*if(PIR1bits.SSPIF == 1) //if MSSP interrupt
     {
         if (SSPSTATbits.S && SSPSTATbits.BF) { // Reset pointer
             if (SSPSTATbits.D_A) {
@@ -60,7 +55,7 @@ void high_isr (void)
             flagStart = 0;
         }
         PIR1bits.SSPIF = 0; //reset MSSP interrupt flag bit
-    }
+    }/**/
     if (INTCONbits.TMR0IF == 1) {
         INTCONbits.TMR0IF = 0;
         tCounter++;
@@ -77,13 +72,10 @@ void high_interrupt (void)
 #pragma interrupt high_isr
 
 void setupTimer() {
-    TRISCbits.RC3 = 1;
-    TRISCbits.RC4 = 1;
     OpenTimer0(TIMER_INT_ON & T0_16BIT & T0_SOURCE_INT & T0_PS_1_128);
     INTCONbits.GIE = 1; //enable interrupts
     TRISBbits.RB1 = 1; //F or C switch
     //PIE1bits.SSPIE = 1; // Enable I2C interrupt
-    //IPR1bits.SSPIP = 1; // High priority I2C interrupt
 }
 
 #define     MAX_RETRY_ATTEMPTS          10
@@ -116,28 +108,41 @@ I2CCommand i2ccmd = { 0, 0, 0, 0 };
 #define PIN_SCL PORTCbits.RC3
 #define PIN_SDA PORTCbits.RC4
 
-char str[20];
-char data = 'a', dump;
-void communications() {
-    //PIN_X = ~PIN_X;
-    //dump = I2CGet(1);
+void setupI2C() {
+    PIN_SCL_HZ = 1;
+    PIN_SDA_HZ = 1;
 
-    //putcUSART(dump);
+    //OpenI2C (SLAVE_7, SLEW_OFF);
+
+    SSPCON1 = 0b00110110;  // 7-bit Slave mode, START/STOP interrupts enabled, SSPEN enabled (serial port)
+    SSPCON2 = 0b00000000;   // Clock stretching is enabled for slave transmit only
+    SSPSTATbits.SMP = 1;    // Slew rate 100 kHz
+    SSPSTATbits.CKE = 1;    // Enable SMBus specific inputs
+    //SSPSTATbits.CKE = 0;    // Disable SMBus specific inputs
+    SSPCON1bits.CKP = 1;        // Release clock
+
+    SSPADD = 0xb0;
+    transmitBuffer[SLAVE_BUFFER_SIZE] = '\0';
+    receiveBuffer[MASTER_BUFFER_SIZE] = '\0';
 }
 
-char asdf = '0';
+/*char asdf = 'a';
+char str[80];
 void main(void)
 {
-    TRISBbits.RB0 = 0;
+    
     setupTimer();
     setupTerminal();
+    setupI2C();
     terminalSendPString("\033[2J");
     while (BusyUSART());
     putrsUSART("running\r\n");
     while(1) {
-        communications();
         if (flagPrint) {
+            //sprintf(str, "[%s]", rxBuffer);
+            terminalSendPString("\r\n");
             terminalSendString(rxBuffer);
+            terminalSendPString("\r\n");
             flagPrint = 0;
         }
         if (flagTimer) {
@@ -151,3 +156,95 @@ void main(void)
         }
     }
 }
+
+/*void setupI2C() {
+    OpenI2C (SLAVE_7, SLEW_OFF);
+    SSPCON1 |= 16;
+    //SSPCON1bits.CKP = 1;
+    SSPADD = DEVICE_ADDRESS;
+    transmitBuffer[SLAVE_BUFFER_SIZE] = '\0';
+    receiveBuffer[MASTER_BUFFER_SIZE] = '\0';
+}*/
+
+char str[20];
+char addr, data = 'q';
+void communications() {
+    // Setup SLAVE<-MASTER
+
+    if (DataRdyI2C()) {
+        data = SSPBUF;
+        putcUSART('g');
+        if (SSPSTATbits.R_NOT_W) {
+            putcUSART('R');
+        } else {
+            putcUSART('W');
+        }
+    }
+}
+
+char asdf = '0';
+void main(void)
+{
+
+    setupTimer();
+    setupTerminal();
+    setupI2C();
+    terminalSendPString("\033[2J");
+    while (BusyUSART());
+    putrsUSART("running\r\n");
+    while(1) {
+        communications();
+        if (flagPrint) {
+            //sprintf(str, "[%s]", rxBuffer);
+            terminalSendPString("\r\n");
+            terminalSendString(rxBuffer);
+            terminalSendPString("\r\n");
+            flagPrint = 0;
+        }
+        if (flagTimer) {
+            while (BusyUSART());
+            putcUSART(asdf++);
+            flagTimer = 0;
+            if (asdf > '9') {
+                asdf = '0';
+                terminalSendPString("\r\n");
+            }
+        }
+    }
+}
+
+    /*if (DataRdyI2C()) {
+        addr = ReadI2C();
+        AckI2C();
+        IdleI2C();
+        data = ReadI2C();
+        NAckI2C();
+        IdleI2C();
+        /*getcI2C();
+        AckI2C();
+        IdleI2C();
+        getsI2C(receiveBuffer, MASTER_BUFFER_SIZE);
+        IdleI2C();
+        AckI2C();
+        sprintf(str, "%s", receiveBuffer);
+        terminalSendPString("Printing contents:\r\n");
+        terminalSendString(str);
+        terminalSendPString("Done\r\n");
+        IdleI2C();
+        NotAckI2C();
+        IdleI2C();*/
+        /*getsI2C(receiveBuffer, MASTER_BUFFER_SIZE);
+        for (i = 0; i < MASTER_BUFFER_SIZE / 2; i++) {
+            status |= (receiveBuffer[i] == ~receiveBuffer[MASTER_BUFFER_SIZE / 2 + i]) << i;
+        }
+        terminalSendPString("Some Bit Thing\n\r");
+        terminalSendPString("Listening Again\n\r");
+        while (!DataRdyI2C());
+        getcI2C();
+        terminalSendPString("Receiving Buffer\n\r");
+        if (SSPSTAT & 0x04) {
+            while (putsI2C(transmitBuffer));
+        }
+        terminalSendPString("Print Contents To USART\n\r");*/
+    //}
+/*}*/

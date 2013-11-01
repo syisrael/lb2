@@ -3,7 +3,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <timers.h>
-#include <delays.h>
 
 #include <i2c.h>
 
@@ -20,11 +19,7 @@
 void setupTimer(void);
 void setupI2C(void);
 void communications(void);
-void DelayTCY(unsigned char);
-void Delay10TCYx(unsigned char);
-void Delay100TCY(unsigned char);
 void Delay1KTCYx(unsigned char);
-void Delay10KTCY(unsigned char);
 void I2CDelay(void);
 void I2CStop(void);
 void I2CStart(void);
@@ -33,28 +28,11 @@ unsigned char I2CGet(char);
 
 int tCounter = 0;
 char flagTimer = 0;
-char x;
 void timer_isr (void)
 {
-    if (PIR1bits.SSPIF) {
-        if (SSPSTATbits.BF) {
-            x = SSPBUF;
-
-            if (SSPSTATbits.R_NOT_W) {
-                
-            } else {
-
-            }
-        }
-
-        PIR1bits.SSPIF = 0;
-    }
-
-    if (INTCONbits.TMR0IF) {
-        INTCONbits.TMR0IF = 0;
-        tCounter++;
+	INTCONbits.TMR0IF = 0;
+	tCounter++;
         flagTimer = 1;
-    }
 }
 
 #pragma code high_vector=0x08
@@ -97,33 +75,101 @@ short status = 0;
 typedef struct { char address, command, measureType, fetchCount; } I2CCommand;
 I2CCommand i2ccmd = { 0, 0, 0, 0 };
 
+#define SCL     TRISCbits.RC3
+#define SDA     TRISCbits.RC4
+#define SCL_IN  PORTCbits.RC3
+#define SDA_IN  PORTCbits.RC4
+
+void I2CDelay() {
+    Delay1KTCYx(0x01);
+}
+
+void I2CStart()
+{
+  SDA = 1;
+  I2CDelay();
+  SCL = 1;
+  I2CDelay();
+  SDA = 0;
+  I2CDelay();
+  SCL = 0;
+  I2CDelay();
+}
+
+void I2CStop(void)
+{
+  SDA = 0;             // i2c stop bit sequence
+  I2CDelay();
+  SCL = 1;
+  I2CDelay();
+  SDA = 1;
+  I2CDelay();
+}
+
+unsigned char I2CGet(char ack)
+{
+    char x, d=0;
+    SDA = 1;
+    for(x=0; x<8; x++) {
+        d <<= 1;
+        do {
+            SCL = 1;
+        } while(SCL_IN==0);    // wait for any SCL clock stretching
+        I2CDelay();
+        if(SDA_IN)
+            d |= 1;
+        SCL = 0;
+    }
+    if(ack) SDA = 0;
+    else SDA = 1;
+    SCL = 1;
+    I2CDelay();             // send (N)ACK bit
+    SCL = 0;
+    SDA = 1;
+    return d;
+}
+
+unsigned char I2CPut(unsigned char d)
+{
+    char x;
+    unsigned char b;
+    for(x=8; x; x--) {
+        if(d&0x80) SDA = 1;
+        else SDA = 0;
+        SCL = 1;
+        d <<= 1;
+        SCL = 0;
+    }
+    SDA = 1;
+    SCL = 1;
+    I2CDelay();
+    b = SDA_IN;          // possible ACK bit
+    SCL = 0;
+    return b;
+}
+
+char data = 'c', dump;
 void communications() {
-    StartI2C();
-    IdleI2C();
-    WriteI2C(0xb0);
-    IdleI2C();
-    WriteI2C('U');
-    IdleI2C();
-    StopI2C();
-    IdleI2C();
-    Delay1KTCYx(1);
+    I2CStart();
+    I2CPut(0xb0);
+    I2CPut('U');
+    I2CStart();
+    I2CPut(0xb1);
+    I2CPut('Y');
+    I2CStop();
 }
 
 void main(void)
 {
+    SDA = SCL = 1;
+    SCL_IN = SDA_IN = 0;
     i2ccmd.address = 0xb0;
     i2ccmd.command = 'U';
     i2ccmd.measureType = 1;
     i2ccmd.fetchCount = 1;
     setupTimer();
     //setupTerminal();
-
-    PIE1bits.SSPIE = 1;
-    PIR1bits.SSPIF = 1;
-
-    OpenI2C(MASTER, SLEW_OFF);
-    SSPADD = 0x31;
-
+    //setupI2C();
     while(1) {
         communications();
         if (flagTimer) {
