@@ -1,14 +1,15 @@
 /* Compile options:  -ml (Large code model) */
-#include <p18f4620.h>
+#include <p18f452.h>
 #include <delays.h>
+#include <stdlib.h>
 
 #pragma config WDT=OFF              // Watchdog off
-//#pragma config BOR=OFF              // Brown out reset
+#pragma config BOR=OFF              // Brown out reset
 #pragma config LVP=OFF              //
 #pragma config CP0=OFF              // Code protection
 #pragma config CP1=OFF              // Code protection
-#pragma config CP2=OFF              // Code protection
-#pragma config CP3=OFF              // Code protection
+//#pragma config CP2=OFF              // Code protection
+//#pragma config CP3=OFF              // Code protection
 #pragma config CPB=OFF              // Boot
 #pragma config WRTC=OFF             // Configuration Register Write Protection
 
@@ -41,6 +42,8 @@ char fahrenheit = 1;
 short SRAMAddressPtrs[4] = {0,32,64,96};
 
 void setupSRAM(void);
+int getAnalog(void);
+int getDigital(void);
 void writeSRAM(byte selector, int data);
 int readSRAM(byte selector, short history);
 
@@ -189,6 +192,15 @@ int readSRAM(byte selector, short history) {
     return data;
 }
 
+int getAnalog(){
+	int send = rand() % 819; //identical to the ADC's value for 4 volts
+	return send;
+}
+
+int getDigital(){
+	int send = rand() % 4098; //equivalent to the 12 bits from the flow rate
+	return send;
+}
 
 
 
@@ -197,14 +209,23 @@ void main() {
     setupSRAM();
     Delay1KTCYx(1);
     for (i = 0; i < 16; i++){
-            writeSRAM(0, i);
+            //writeSRAM(0, getAnalog()); //carbon
+            //writeSRAM(1, getDigital()); // flow rate
+            //writeSRAM(2, getAnalog()); //salinity
+            //writeSRAM(3, getAnalog()); //temp
+    }
+    for (i = 0; i < 32; i++){
+           writeSRAM(0, i);
+           writeSRAM(1, i);
+           writeSRAM(2, i);
+           writeSRAM(3, i);
     }
     while(1) {
-        for (i = 0; i < 32; i++){
-           writeSRAM(0, i);
-        }
         for (i = 0; i < 32; i += 2){
-            //readSRAM(0, i);
+            readSRAM(0, i);
+            readSRAM(1, i);
+            readSRAM(2, i);
+            readSRAM(3, i);
 	}
     }
 }
