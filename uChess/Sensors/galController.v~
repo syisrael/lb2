@@ -1,9 +1,10 @@
 module galController(Row, clkout, enable,reset,clock);
 	input enable, reset, clock;
-	output [7:0] Row;
-  output clkout;
+	output [7:0] Row, clkout;
   
   	clockDivider toMotors(clkout, clock);
+    
+    not(r0,0'b1);
   
   	Dfflip DFF0(q0,nq0,nq0,clock,reset,enable);
   
