@@ -13,8 +13,10 @@
 #pragma config WRTC=OFF             // Configuration Register Write Protection
 
 #define 	enable 		PORTAbits.RA0
-#define		clkout		PORTAbits.RA1
 #define 	rst			PORTAbits.RA2
+#define		clkout		PORTAbits.RA1
+
+#define		clkin		PORTAbits.RB4
 
 #define		test		PORTAbits.RA3			
 
@@ -56,10 +58,15 @@ void main(){
 
 void readSensors(){
 	int i = 0;
-        int j = 0;
+    int j = 0;
+    clkout = 0;
 	enable = 1;
-       Delay1KTCYx(1);
+    Delay1KTCYx(1);
+    
 	for(i = 0; i < 8; i++){
+		while(clkin == 1);
+		clkout = 1;
+		Delay1KTCYx(1);
 		//low true
 		rows[i][0] = a;
 		rows[i][1] = b;
@@ -71,12 +78,16 @@ void readSensors(){
 		rows[i][6] = g;
 		rows[i][7] = h;
 		
+		clkout = 0;
+		
 		rows[i][8] = edge1;//on a side
 		rows[i][9] = edge2;//on a side
 		rows[i][10] = edge3;//on h side
 		rows[i][11] = edge4;//on h side
+		Delay10KTCYx(1);
 	}
-       Delay1KTCYx(1);
+    Delay1KTCYx(1);
+    
 	enable = 0;
 	test = rows[0][0];
 	rst = 1;
