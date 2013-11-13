@@ -1,5 +1,16 @@
 //Pic sensor controller
+#include <p18f452.h>
+#include <delays.h>
 
+#pragma config WDT=OFF              // Watchdog off
+#pragma config BOR=OFF              // Brown out reset
+//#pragma config LVP=OFF              //
+#pragma config CP0=OFF              // Code protection
+#pragma config CP1=OFF              // Code protection
+#pragma config CP2=OFF              // Code protection
+#pragma config CP3=OFF              // Code protection
+#pragma config CPB=OFF              // Boot
+#pragma config WRTC=OFF             // Configuration Register Write Protection
 
 #define 	enable 		PORTAbits.RA0
 #define		clkout		PORTAbits.RA1
@@ -26,25 +37,28 @@
 //...
 //row7->> edge1 edge2 a b c d e f g h edge3 edge4
  
-int [8][12] rows; //[rows][columns]
+int rows [8][12]; //[rows][columns]
 
-void readSensors();
+void readSensors(void);
 
-void main{
+void main(){
 	TRISC = TRISB = 0x01;
 	TRISA = 0x00;
+
 	
 	while(1){
 		readSensors();
 		Delay10KTCYx(10);
+                Delay10KTCYx(10);
 	}
 
 }
 
 void readSensors(){
 	int i = 0;
+        int j = 0;
 	enable = 1;
-	
+       Delay1KTCYx(1);
 	for(i = 0; i < 8; i++){
 		//low true
 		rows[i][0] = a;
@@ -62,9 +76,10 @@ void readSensors(){
 		rows[i][10] = edge3;//on h side
 		rows[i][11] = edge4;//on h side
 	}
+       Delay1KTCYx(1);
 	enable = 0;
 	test = rows[0][0];
 	rst = 1;
-	Delay1KTCYx(10);
+	Delay1KTCYx(1);
 	rst = 0;
 }
