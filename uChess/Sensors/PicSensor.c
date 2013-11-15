@@ -12,11 +12,11 @@
 #pragma config CPB=OFF              // Boot
 #pragma config WRTC=OFF             // Configuration Register Write Protection
 
-#define 	enable 		PORTAbits.RA0
+#define 	enable 		PORTDbits.RD0
 #define 	rst			PORTAbits.RA2
 #define		clkout		PORTAbits.RA1
 
-#define		clkin		PORTAbits.RB4
+#define		clkin		PORTBbits.RB4
 
 #define		test		PORTAbits.RA3			
 
@@ -39,58 +39,93 @@
 //...
 //row7->> edge1 edge2 a b c d e f g h edge3 edge4
  
-int rows [8][12]; //[rows][columns]
+int row0,row1,row2,row3,row4,row5,row6,row7; //[rows][columns]
 
-void readSensors(void);
+//void readSensors(void);
+int readSensors(void);
+void constructRows(void);
 
 void main(){
-	TRISC = TRISB = 0x01;
-	TRISA = 0x00;
+    int i,k;
+	TRISC = TRISB = 0xFF;
 
-	
+	TRISA = 0x00;
+        TRISDbits.RD0 = 0;
+
 	while(1){
-		readSensors();
+		constructRows();
 		Delay10KTCYx(10);
                 Delay10KTCYx(10);
 	}
 
 }
 
-void readSensors(){
-	int i = 0;
-    int j = 0;
+void constructRows(){
     clkout = 0;
-	enable = 1;
+    enable = 1;
     Delay1KTCYx(1);
-    
-	for(i = 0; i < 8; i++){
-		while(clkin == 1);
-		clkout = 1;
-		Delay1KTCYx(1);
-		//low true
-		rows[i][0] = a;
-		rows[i][1] = b;
-		rows[i][2] = c;
-		rows[i][3] = d;
-		
-		rows[i][4] = e;	
-		rows[i][5] = f;
-		rows[i][6] = g;
-		rows[i][7] = h;
-		
-		clkout = 0;
-		
-		rows[i][8] = edge1;//on a side
-		rows[i][9] = edge2;//on a side
-		rows[i][10] = edge3;//on h side
-		rows[i][11] = edge4;//on h side
-		Delay10KTCYx(1);
-	}
+
+    row0 = readSensors();
+    Delay10KTCYx(1);
+    row1 = readSensors();
+    Delay10KTCYx(1);
+    row2 = readSensors();
+    Delay10KTCYx(1);
+    row3 = readSensors();
+    Delay10KTCYx(1);
+
+    row4 = readSensors();
+    Delay10KTCYx(1);
+    row5 = readSensors();
+    Delay10KTCYx(1);
+    row6 = readSensors();
+    Delay10KTCYx(1);
+    row7 = readSensors();
+
     Delay1KTCYx(1);
+    enable = 0;
+    Delay1KTCYx(10);
+    rst = 1;
+    Delay1KTCYx(10);
+    rst = 0;
+}
+
+int readSensors(){
+    int row = 0;
+    clkout = 0;
+    Delay10KTCYx(1);
+    //low true
+
+//not working
+    row = PORTCbits.RC0;
+    row = row << 0b1;
+    row |= b;
+    row = row << 0b1;
+    row |= c;
+    row  = row << 0b1;
+    row |= d;
+    row  = row << 0b1;
+   // test = rows[i][0];
+
+    row |= e;
+    row << 0b1;
+    row |= f;
+    row << 0b1;
+    row |= g;
+    row << 0b1;
+    row |= h;
+    row << 0b1;
+
+    row |= edge1;//on a side
+    row << 0b1;
+    row |= edge2;//on a side
+    row << 0b1;
+    row |= edge3;//on h side
+    row << 0b1;
+    row |= edge4;//on h side
     
-	enable = 0;
-	test = rows[0][0];
-	rst = 1;
-	Delay1KTCYx(1);
-	rst = 0;
+    clkout = 1;
+    Delay10KTCYx(1);
+
+    return row;
 }
