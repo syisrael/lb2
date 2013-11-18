@@ -1,6 +1,7 @@
 //Pic sensor controller
 #include <p18f452.h>
 #include <delays.h>
+#include "Sensors.h"
 
 #pragma config WDT=OFF              // Watchdog off
 #pragma config BOR=OFF              // Brown out reset
@@ -12,91 +13,49 @@
 #pragma config CPB=OFF              // Boot
 #pragma config WRTC=OFF             // Configuration Register Write Protection
 
-//Nissa's PIC
-/*
-#define 	enable 		PORTDbits.RD0
-#define 	rst		PORTDbits.RD2
-#define		clkout		PORTDbits.RD1
-
-#define         in0             PORTDbits.RD4
-#define         in1             PORTDbits.RD5
-#define         in2             PORTDbits.RD6
-#define         in3             PORTDbits.RD7
-
-#define         sensor          PORTCbits.RC0
-*/
-
-
-//Sam's PIC
-#define 	enable 		PORTCbits.RC4   //try RE0
-#define 	rst		PORTEbits.RE1
-#define		clkout		PORTEbits.RE2
-
-#define         in0             PORTBbits.RB2
-#define         in1             PORTBbits.RB3
-#define         in2             PORTBbits.RB4
-#define         in3             PORTBbits.RB5
-
-#define         sensor          PORTCbits.RC0
-
-//#define		test		PORTDbits.RD4
-
-
-/*
-#define		edge1  		PORTCbits.RC0 //on a side   
-#define		edge2  		PORTCbits.RC1 //on a side   
-
-#define 	a  		PORTCbits.RC2   
-#define 	b  		PORTCbits.RC3   
-#define 	c  		PORTCbits.RC4   
-#define 	d  		PORTCbits.RC5   
-#define 	e  		PORTBbits.RB0   
-#define 	f  		PORTBbits.RB1   
-#define 	g  		PORTBbits.RB2   
-#define 	h  		PORTBbits.RB3   
-
-#define		edge3  		PORTBbits.RB4 //on h side   
-#define		edge4  		PORTBbits.RB5 //on h side
-*/
-
+//Columns:  0     1   2 3 4 5 6 7 8 9  10    11
 //row0->> edge1 edge2 a b c d e f g h edge3 edge4
 //row1->> edge1 edge2 a b c d e f g h edge3 edge4
 //...
 //row7->> edge1 edge2 a b c d e f g h edge3 edge4
  
-int row0,row1,row2,row3,row4,row5,row6,row7; //[rows][columns]
+int row0,row1,row2,row3,row4,row5,row6,row7; 
 
 //void readSensors(void);
 int readSensors(void);
 void constructRows(void);
+void setupSensors(void);
 
 void main(){
-    int i,k;
-	
-        //Nissa's PIC
-       /* TRISC = TRISB = 0xFF; //input
-	TRISA = 0x00;           //output
-        TRISD = 0x00;*/
+    setupSensors();
+    while(1){
+            constructRows();
+            Delay10KTCYx(10);
+    }
 
-        //Sam's PIC
-        TRISBbits.RB5 = 0;
-        TRISBbits.RB4 = 0;
-        TRISBbits.RB3 = 0;
-        TRISBbits.RB2 = 0;
+}
 
-        TRISCbits.RC0 = 1;
+void setupSensors(){
+    //Nissa's PIC
+   /*
+    TRISC = TRISB = 0xFF; //input
+    TRISA = 0x00;         //output
+    TRISD = 0x00;
+   */
 
-        TRISCbits.RC4 = 0;
+    //Sam's PIC
+    TRISBbits.RB5 = 0;
+    TRISBbits.RB4 = 0;
+    TRISBbits.RB3 = 0;
+    TRISBbits.RB2 = 0;
 
-        TRISEbits.RE0 = 0;
-        TRISEbits.RE1 = 0;
-        TRISEbits.RE2 = 0;
+    TRISCbits.RC0 = 1;
 
-	while(1){
-		constructRows();
-		Delay10KTCYx(10);
-	}
+    TRISCbits.RC4 = 0;
 
+    TRISEbits.RE0 = 0;
+    TRISEbits.RE1 = 0;
+    TRISEbits.RE2 = 0;
 }
 
 
@@ -236,10 +195,9 @@ int readSensors(){
     return row;
 }
 
-
-
+///Parallel reading
 /*
-int readSensors(){        ///Parallel reading
+int readSensors(){
     int row = 0;
     Delay10KTCYx(1);
     clkout = 1;
@@ -251,7 +209,7 @@ int readSensors(){        ///Parallel reading
     row <<= 1;
     row |= edge2;//on a side
     row <<= 1;
-    
+
     row |= a;
     row <<= 1;
     row |= b;
