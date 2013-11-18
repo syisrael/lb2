@@ -13,21 +13,19 @@
 #pragma config WRTC=OFF             // Configuration Register Write Protection
 
 #define 	enable 		PORTDbits.RD0
-#define 	rst			PORTAbits.RA2
-#define		clkout		PORTAbits.RA1
+#define 	rst		PORTDbits.RD2
+#define		clkout		PORTDbits.RD1
 
-#define		clkin		PORTBbits.RB4
+#define		test		PORTDbits.RD4
 
-#define		test		PORTAbits.RA3			
-
-#define 	a  			PORTCbits.RC0
-#define 	b  			PORTCbits.RC1
-#define 	c  			PORTCbits.RC2
-#define 	d  			PORTCbits.RC3
-#define 	e  			PORTCbits.RC4
-#define 	f  			PORTCbits.RC5
-#define 	g  			PORTCbits.RC6
-#define 	h  			PORTCbits.RC7
+#define 	a  		PORTCbits.RC0
+#define 	b  		PORTCbits.RC1
+#define 	c  		PORTCbits.RC2
+#define 	d  		PORTCbits.RC3
+#define 	e  		PORTCbits.RC4
+#define 	f  		PORTCbits.RC5
+#define 	g  		PORTBbits.RB4
+#define 	h  		PORTBbits.RB5
 
 #define		edge1  		PORTBbits.RB0 //on a side
 #define		edge2  		PORTBbits.RB1 //on a side 
@@ -51,6 +49,9 @@ void main(){
 
 	TRISA = 0x00;
         TRISDbits.RD0 = 0;
+        TRISDbits.RD4 = 0;
+        TRISDbits.RD1 = 0;
+        TRISDbits.RD2 = 0;
 
 	while(1){
 		constructRows();
@@ -63,9 +64,10 @@ void main(){
 void constructRows(){
     clkout = 0;
     enable = 1;
-    Delay1KTCYx(1);
+    Delay10KTCYx(1);
 
     row0 = readSensors();
+    test = row0 >> 10;
     Delay10KTCYx(1);
     row1 = readSensors();
     Delay10KTCYx(1);
@@ -81,51 +83,54 @@ void constructRows(){
     row6 = readSensors();
     Delay10KTCYx(1);
     row7 = readSensors();
-
-    Delay1KTCYx(1);
+    Delay10KTCYx(1);
     enable = 0;
-    Delay1KTCYx(10);
     rst = 1;
-    Delay1KTCYx(10);
+    Delay10KTCYx(1);
     rst = 0;
+
 }
 
 int readSensors(){
     int row = 0;
+    Delay1KTCYx(1);
     clkout = 0;
-    Delay10KTCYx(1);
+    Delay10KTCYx(10);
     //low true
 
-//not working
-    row = PORTCbits.RC0;
-    row = row << 0b1;
+    row = edge1;//on a side
+    row <<= 1;
+    row |= edge2;//on a side
+    
+    row |= a;
+    row <<= 1;
     row |= b;
-    row = row << 0b1;
+    row <<= 1;
     row |= c;
-    row  = row << 0b1;
+    row <<= 1;
     row |= d;
-    row  = row << 0b1;
+    row <<= 1;
    // test = rows[i][0];
 
     row |= e;
-    row << 0b1;
+    row <<= 1;
     row |= f;
-    row << 0b1;
+    row <<= 1;
     row |= g;
-    row << 0b1;
+    row <<= 1;
     row |= h;
-    row << 0b1;
+    row <<= 1;
 
-    row |= edge1;//on a side
-    row << 0b1;
-    row |= edge2;//on a side
-    row << 0b1;
     row |= edge3;//on h side
-    row << 0b1;
+    row <<= 1;
     row |= edge4;//on h side
-    
+
+    Delay10KTCYx(10);
+
     clkout = 1;
+
     Delay10KTCYx(1);
+    Delay1KTCYx(10);
 
     return row;
 }
