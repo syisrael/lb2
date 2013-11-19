@@ -40,17 +40,18 @@ void main(void)
 {
     int i = 0;
     //setupSensors();
-    sprintf(str,"Ur the engineer!");
-    setupLCD();
+    sprintf(str,"U R D N GIN EAR");
     //setupCommunications();
+    setupLCD();
     printLCD(str,str);
-    setupMovement();
-    Delay1KTCYx(10);
+    //setupMovement();
+    Delay10KTCYx(10);
     while(1){
+        printLCD(str,str);
         //constructRows();
         //usartTask();
-        moveTo(1,800);
-        for(i=0;i<10;i++)
+        //moveTo(1,800);
+        for(i=0;i<100;i++)
         Delay10KTCYx(10);
     }
 }
