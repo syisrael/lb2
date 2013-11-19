@@ -6,17 +6,19 @@
 #include <stdio.h>
 #include <string.h>
 #include <timers.h>
+#include <delays.h>
 #include "communications.h"
 #include "lcd.h"
 
 char cmdType;
 char cmd[50];
-char screenbuff1[16] = "                ";
-char screenbuff2[16] = "                ";
+char screenbuff1[16] = "               ";
+char screenbuff2[16] = "               ";
 char * ptr;
 int x,y;
+int row0,row1,row2,row3,row4,row5,row6,row7;
 
-void sendPString(char *str)
+void sendPString(const char* str)
 {
     while(BusyUSART());
     putrsUSART(str);
@@ -61,6 +63,50 @@ void usartTask()
 
             break;
         case 'e': //Request sensor data
+            enableRead();
+            Delay10TCYx(1);
+
+            row0 = readSensors();
+            sprintf(screenbuff1,"%d",row0);
+            sendString(screenbuff1);
+            Delay10TCYx(1);
+
+            row1 = readSensors();
+            sprintf(screenbuff1,"%d",row1);
+            sendString(screenbuff1);
+            Delay10TCYx(1);
+
+            row2 = readSensors();
+            sprintf(screenbuff1,"%d",row2);
+            sendString(screenbuff1);
+            Delay10TCYx(1);
+
+            row3 = readSensors();
+            sprintf(screenbuff1,"%d",row3);
+            sendString(screenbuff1);
+            Delay10TCYx(1);
+
+            row4 = readSensors();
+            sprintf(screenbuff1,"%d",row4);
+            sendString(screenbuff1);
+            Delay10TCYx(1);
+
+            row5 = readSensors();
+            sprintf(screenbuff1,"%d",row5);
+            sendString(screenbuff1);
+            Delay10TCYx(1);
+
+            row6 = readSensors();
+            sprintf(screenbuff1,"%d",row6);
+            sendString(screenbuff1);
+            Delay10TCYx(1);
+
+            row7 = readSensors();
+            sprintf(screenbuff1,"%d",row7);
+            sendString(screenbuff1);
+            Delay10TCYx(1);
+
+            disableRead();
 
             break;
         case 'f': //Return to home

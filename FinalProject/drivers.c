@@ -6,10 +6,11 @@
 #include "lcd.h"
 #include "movement.h"
 #include "communications.h"
+#include "Sensors.h"
 
 #pragma config WDT=OFF              // Watchdog off
 #pragma config BOR=OFF              // Brown out reset
-//#pragma config LVP=OFF              //
+#pragma config LVP=OFF              //
 #pragma config CP0=OFF              // Code protection
 #pragma config CP1=OFF              // Code protection
 #pragma config CP2=OFF              // Code protection
@@ -38,14 +39,16 @@ char str[30];
 void main(void)
 {
     int i = 0;
+    //setupSensors();
     sprintf(str,"Ur the engineer!");
     setupLCD();
-    setupCommunications();
+    //setupCommunications();
     printLCD(str,str);
     setupMovement();
     Delay1KTCYx(10);
     while(1){
-        usartTask();
+        //constructRows();
+        //usartTask();
         moveTo(1,800);
         for(i=0;i<10;i++)
         Delay10KTCYx(10);

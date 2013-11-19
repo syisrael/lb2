@@ -1,6 +1,7 @@
 #include <p18f452.h>
 #include <delays.h>
 #include <timers.h>
+#include <string.h>
 #include "xlcd.h"
 #include "lcd.h"
 
@@ -56,6 +57,12 @@ void clearLCD(void) {
 }
 
 void printLCD(char *line1, char *line2) {
+    if(strlen(line1) > 16){
+        line1[16] = '\0';
+    }
+    if(strlen(line2) > 16){
+        line2[16] = '\0';
+    }
     openLCD();
     while (BusyXLCD());
     SetDDRamAddr(0x80);

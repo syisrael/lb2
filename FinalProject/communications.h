@@ -3,8 +3,11 @@
 
 void usartTask(void);
 void sendString(char *str);
-void sendPString(char *str);
+void sendPString(const char *str);
 void setupCommunications(void);
+void disableRead(void);
+void enableRead(void);
+int readSensors(void);
 
 #endif	/* COMMUNICATIONS_H */
 
