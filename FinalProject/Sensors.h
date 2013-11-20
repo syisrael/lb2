@@ -61,6 +61,9 @@ void constructRows(void);
 void setupSensors(void);
 void disableRead(void);
 void enableRead(void);
+void clearCounts(void);
+void clearCounts(char row, int column);
+void makeCounts(char* counts, int rowNew, int rowOld);
 
 #endif	/* SENSORS_H */
 

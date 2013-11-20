@@ -13,7 +13,6 @@ int nrow0,nrow1,nrow2,nrow3,nrow4,nrow5,nrow6,nrow7;
 int orow0,orow1,orow2,orow3,orow4,orow5,orow6,orow7;
 short r0count,r1count,r2count,r3count,r4count,r5count,r6count,r7count [12];
 
-
 void setupSensors(){
     //Nissa's PIC
    /*
@@ -35,13 +34,51 @@ void setupSensors(){
     TRISEbits.RE0 = 0;
     TRISEbits.RE1 = 0;
     TRISEbits.RE2 = 0;
+	
 }
 
 void makeCounts(char* counts, int rowNew, int rowOld){
-    counts[0] = 0;
-
+    int i = 0;
+	int tempNew;
+	int tempOld;
+	if(rowNew =! rowOld){
+		for(int i = 0; i < 12; i++){
+			rowNew >>= i;
+			tempNew = rowNew & 1;
+			rowOld >>= i;
+			tempOld = rowOld & 1;
+			if(tempOld =! tempNew){
+				counts[i]++;
+			}	
+		}
+	}
 }
 
+void clearCounts(){
+	int i = 0;
+	for(int i = 0; i <12; i++){
+		r0count[i] = 0;
+		r1count[i] = 0;
+			                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              r2count[i] = 0;
+		r3count[i] = 0;
+		r4count[i] = 0;
+		r5count[i] = 0;
+		r6count[i] = 0;
+		r7count[i] = 0;
+	}
+}
+
+void clearCounts(char row, int column){
+	if(row == 0) 	r0count[column] = 0;
+	if(row == 1) 	r1count[column] = 0;
+	if(row == 2) 	r2count[column] = 0;
+	if(row == 3) 	r3count[column] = 0;
+	if(row == 4) 	r4count[column] = 0;
+	if(row == 5) 	r5count[column] = 0;
+	if(row == 6) 	r6count[column] = 0;
+	if(row == 7) 	r7count[column] = 0;
+
+}
 
 void enableRead(){
     rst = 1;
