@@ -1,4 +1,4 @@
-/* 
+/*
  * File:   Sensors.h
  * Author: nissav
  *
@@ -7,10 +7,6 @@
 
 #ifndef SENSORS_H
 #define	SENSORS_H
-
-#ifdef	__cplusplus
-extern "C" {
-#endif
 
 //Nissa's PIC Serial
 /*
@@ -29,6 +25,10 @@ extern "C" {
 
 //Nissa's PIC Parallel
 /*
+#define 	enable 		PORTDbits.RD0
+#define 	rst		PORTDbits.RD2
+#define		clkout		PORTDbits.RD1
+
 #define		edge1  		PORTCbits.RC0 //on a side
 #define		edge2  		PORTCbits.RC1 //on a side
 
@@ -48,6 +48,7 @@ extern "C" {
 */
 
 //Sam's PIC
+
 #define 	enable 		PORTCbits.RC4   //try RE0
 #define 	rst		PORTEbits.RE1
 #define		clkout		PORTEbits.RE2
@@ -59,9 +60,20 @@ extern "C" {
 
 #define         sensor          PORTCbits.RC0
 
-#ifdef	__cplusplus
-}
-#endif
+
+int readSensors(void);
+void newRead(void);
+void setupSensors(void);
+void disableRead(void);
+void enableRead(void);
+void clearCounts(void);
+void clearOne(char row, int column);
+void makeCounts(int* counts, int rowNew, int rowOld);
+void saveBackup(void);
+
+int nrow0,nrow1,nrow2,nrow3,nrow4,nrow5,nrow6,nrow7;
+int orow0,orow1,orow2,orow3,orow4,orow5,orow6,orow7;
+int r0count[12],r1count[12],r2count[12],r3count[12],r4count[12],r5count[12],r6count[12],r7count[12];
 
 #endif	/* SENSORS_H */
 
