@@ -30,7 +30,7 @@ void resetPosition()
 
 void moveTo(int toX, int toY)
 {
-    int x = toX - currentX;
+    /*int x = toX - currentX;
     int y = toY - currentY;
     double len = sqrt(x^2+y^2);
     double angle;
@@ -55,22 +55,22 @@ void moveTo(int toX, int toY)
         setDir(MOTOR2,CCW);
 
     x2 = abs(cos(angle)) * len;
-    y2 = abs(sin(angle)) * len;
+    y2 = abs(sin(angle)) * len;*/
 
 
     setTorque(TORQUE_HIGH);
-    sprintf(str,"Mode: HIGH TORQUE   ");
+    sprintf(str,"Mode: FULL SPEED   ");
     printLCD(str,str);
-    tester(STANDARD);
+    tester(FULL_SPEED);
     
     
-    setTorque(TORQUE_LOW);
+    /*setTorque(TORQUE_LOW);
     sprintf(str,"Mode: LOW TORQUE   ");
     printLCD(str,str);
-    tester(STANDARD);
+    tester(STANDARD);*/
 
 
-    /*
+    
     sprintf(str,"Mode: FAST         ");
     printLCD(str,str);
     tester(FAST);
@@ -81,18 +81,18 @@ void moveTo(int toX, int toY)
     printLCD(str,str);
     tester(SLOW);
     sprintf(str,"DONE!             ");
-    printLCD(str,str);*/
+    printLCD(str,str);
 }
 
 void tester(SPEED s)
 {
-    int k=3600;
+    long k=36000;
     Delay10KTCYx(10);
     setDir(MOTOR1,CW);
     step(MOTOR1,s,k);
     for(k=0;k<10;k++)
     Delay10KTCYx(10);
-    k=3600;
+    k=36000;
     setDir(MOTOR1,CCW);
     step(MOTOR1,s,k);
     for(k=0;k<10;k++)
@@ -101,7 +101,7 @@ void tester(SPEED s)
 
 int abs(int k)
 {
-    if(k > 0){
+    if(k >= 0){
         return k;
     }
     k *= -1;

@@ -18,11 +18,11 @@
 #define TQ PORTCbits.RC1
 #define TTQ TRISCbits.RC1
 
-void doSteps(MOTOR m, int steps);
+void doSteps(MOTOR m, long steps);
 
 int stepDelay = 1000;
 
-void step(MOTOR m, SPEED s, int steps)
+void step(MOTOR m, SPEED s, long steps)
 {
     stepDelay = s;
     doSteps(m,steps);
@@ -36,7 +36,7 @@ void setDir(MOTOR m, DIRECTION dir)
         DIR2 = dir;
 }
 
-void doSteps(MOTOR m, int steps)
+void doSteps(MOTOR m, long steps)
 {
     int i;
     if(m == MOTOR1){

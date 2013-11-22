@@ -39,19 +39,19 @@ char str[30];
 void main(void)
 {
     int i = 0;
-    //setupSensors();
+    setupSensors();
     sprintf(str,"U R D N GIN EAR");
-    //setupCommunications();
+    setupCommunications();
     setupLCD();
     printLCD(str,str);
-    //setupMovement();
+    setupMovement();
     Delay10KTCYx(10);
     while(1){
         printLCD(str,str);
-        //constructRows();
-        //usartTask();
-        //moveTo(1,800);
-        for(i=0;i<100;i++)
+        constructRows();
+        usartTask();
+        moveTo(1,800);
+        for(i=0;i<10;i++)
         Delay10KTCYx(10);
     }
 }
