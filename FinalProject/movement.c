@@ -86,13 +86,13 @@ void moveTo(int toX, int toY)
 
 void tester(SPEED s)
 {
-    long k=36000;
+    long k=3600;
     Delay10KTCYx(10);
     setDir(MOTOR1,CW);
     step(MOTOR1,s,k);
     for(k=0;k<10;k++)
     Delay10KTCYx(10);
-    k=36000;
+    k=3600;
     setDir(MOTOR1,CCW);
     step(MOTOR1,s,k);
     for(k=0;k<10;k++)

@@ -48,7 +48,7 @@ void main(void)
     Delay10KTCYx(10);
     while(1){
         printLCD(str,str);
-        constructRows();
+        newRead();
         usartTask();
         moveTo(1,800);
         for(i=0;i<10;i++)

@@ -1,4 +1,4 @@
-/* 
+/*
  * File:   Sensors.h
  * Author: nissav
  *
@@ -25,6 +25,10 @@
 
 //Nissa's PIC Parallel
 /*
+#define 	enable 		PORTDbits.RD0
+#define 	rst		PORTDbits.RD2
+#define		clkout		PORTDbits.RD1
+
 #define		edge1  		PORTCbits.RC0 //on a side
 #define		edge2  		PORTCbits.RC1 //on a side
 
@@ -44,6 +48,7 @@
 */
 
 //Sam's PIC
+
 #define 	enable 		PORTCbits.RC4   //try RE0
 #define 	rst		PORTEbits.RE1
 #define		clkout		PORTEbits.RE2
@@ -57,13 +62,15 @@
 
 
 int readSensors(void);
-void constructRows(void);
+void newRead(void);
 void setupSensors(void);
 void disableRead(void);
 void enableRead(void);
 void clearCounts(void);
-void clearCounts(char row, int column);
-void makeCounts(char* counts, int rowNew, int rowOld);
+void clearOne(char row, int column);
+void makeCounts(int* counts, int rowNew, int rowOld);
+void saveBackup(void);
+
 
 #endif	/* SENSORS_H */
 
