@@ -57,6 +57,7 @@ void clearLCD(void) {
 }
 
 void printLCD(char *line1, char *line2) {
+    setupLCD();
     if(strlen(line1) > 16){
         line1[16] = '\0';
     }

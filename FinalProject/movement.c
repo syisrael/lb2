@@ -9,13 +9,15 @@
 #include "movement.h"
 #define PI 3.14159265
 
+
 extern int str[30];
 
 int currentX = 0;
 int currentY = 0;
 
 void tester(SPEED);
-int abs(int k);
+long abs(long k);
+int gcd(long a,long b);
 
 void setupMovement(){
     setupMotors();
@@ -25,11 +27,34 @@ void setupMovement(){
 void resetPosition()
 {
     setTorque(TORQUE_LOW);
-    step(MOTOR1,FULL_SPEED,5000);
+    moveTo(-50000,-50000);
 }
 
-void moveTo(int toX, int toY)
+void moveTo(long toX, long toY)
 {
+    long copyX = toX, copyY = toY;
+    long div = gcd(copyX,copyY);
+    long x1 = toX/div;
+    long y1 = toY/div;
+    int i;
+    SPEED s = FULL_SPEED;
+    if(toX > 0){
+        setDir(MOTOR1,CW);
+    }else{
+        setDir(MOTOR1,CCW);
+    }
+    if(toY > 0){
+        setDir(MOTOR2,CW);
+    }else{
+        setDir(MOTOR2,CCW);
+    }
+    sprintf(str,"To:%l,%l",toX,toY);
+    printLCD(str,str);
+    
+    for(i = 0; i < div; i++){
+        step(MOTOR1,s,x1);
+        step(MOTOR2,s,y1);
+    }
     /*int x = toX - currentX;
     int y = toY - currentY;
     double len = sqrt(x^2+y^2);
@@ -58,17 +83,10 @@ void moveTo(int toX, int toY)
     y2 = abs(sin(angle)) * len;*/
 
 
-    setTorque(TORQUE_HIGH);
+    /*setTorque(TORQUE_HIGH);
     sprintf(str,"Mode: FULL SPEED   ");
     printLCD(str,str);
     tester(FULL_SPEED);
-    
-    
-    /*setTorque(TORQUE_LOW);
-    sprintf(str,"Mode: LOW TORQUE   ");
-    printLCD(str,str);
-    tester(STANDARD);*/
-
 
     
     sprintf(str,"Mode: FAST         ");
@@ -81,25 +99,36 @@ void moveTo(int toX, int toY)
     printLCD(str,str);
     tester(SLOW);
     sprintf(str,"DONE!             ");
-    printLCD(str,str);
+    printLCD(str,str);*/
 }
 
 void tester(SPEED s)
 {
-    long k=3600;
+    long k=25600;
     Delay10KTCYx(10);
     setDir(MOTOR1,CW);
     step(MOTOR1,s,k);
+    setDir(MOTOR2,CW);
+    step(MOTOR2,s,k);
     for(k=0;k<10;k++)
     Delay10KTCYx(10);
-    k=3600;
+    k=25600;
     setDir(MOTOR1,CCW);
     step(MOTOR1,s,k);
+    setDir(MOTOR2,CCW);
+    step(MOTOR2,s,k);
     for(k=0;k<10;k++)
     Delay10KTCYx(10);
 }
 
-int abs(int k)
+
+int gcd(long a,long b)
+{
+    if(b==0)
+        return a;
+    return gcd(b,a%b);
+}
+long abs(long k)
 {
     if(k >= 0){
         return k;

@@ -11,6 +11,9 @@
 #include "lcd.h"
 #include "lcd/xlcd.h"
 
+#define ACK 0x06
+#define NAK 0x15
+
 char cmdType;
 char cmd[50];
 char screenbuff1[16] = "               ";
@@ -38,11 +41,11 @@ void usartTask()
         if (DataRdyUSART()) {
             while(BusyUSART());
             cmdType = getcUSART();
-            putcUSART(cmdType);
+            putcUSART(0x06);
         }
 
         switch (cmdType) {
-        case 'a': //Move To (x,y)
+        case 0x01: //Move To (x,y)
             while(BusyUSART());
             getsUSART(&x,2);
             while(BusyUSART());
@@ -51,32 +54,36 @@ void usartTask()
             sendString(screenbuff1);
             printLCD(screenbuff1,screenbuff2);
             break;
-         case 'b': //Show message on LCD
+         case 0x02: //Show message on LCD
             while(BusyUSART());
             getsUSART(cmd,32);
             strncpy(screenbuff1,cmd,16);
             strncpy(screenbuff2,&cmd[16],16);
             printLCD(screenbuff1,screenbuff2);
             break;
-        case 'c': //Extend magnets
+        case 0x03: //Extend magnets
 
             break;
-        case 'd': //Retract magnets
+        case 0x11: //Retract magnets
 
             break;
-        case 'e': //Request sensor data
+        case 0x12: //Return to home
+
+            break;
+        case 0x13: //Request sensor data
             enableRead();
             Delay10TCYx(1);
             for(i=0;i<8;i++){
                 row = readSensors();
                 putcUSART(((char*)&row)[0]);
                 putcUSART(((char*)&row)[1]);
+                putcUSART(((char*)&row)[2]);
                 Delay10TCYx(1);
             }
             disableRead();
             break;
-        case 'f': //Return to home
-            
+        case 0x14: //Request sensor count
+                    
             break;
         case 0xff:
             break;

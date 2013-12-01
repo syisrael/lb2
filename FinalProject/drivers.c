@@ -2,6 +2,7 @@
 #include <delays.h>
 #include <timers.h>
 #include <stdlib.h>
+#include <math.h>
 #include <stdio.h>
 #include "lcd.h"
 #include "movement.h"
@@ -50,7 +51,7 @@ void main(void)
         printLCD(str,str);
         newRead();
         usartTask();
-        moveTo(1,800);
+        moveTo((long)rand(),50);
         for(i=0;i<10;i++)
         Delay10KTCYx(10);
     }

@@ -3,7 +3,7 @@
 
 void setupMovement(void);
 void resetPosition(void);
-void moveTo(int x, int y);
+void moveTo(long x, long y);
 
 #endif	/* MOVEMENT_H */
 

@@ -6,14 +6,14 @@
 #define DIR1 PORTCbits.RC3
 #define TDIR1 TRISCbits.RC3
 
-#define DIR2 PORTBbits.RB0
-#define TDIR2 TRISBbits.RB0
+#define DIR2 PORTAbits.RA0
+#define TDIR2 TRISAbits.RA0
 
 #define STEP1 PORTCbits.RC2
 #define TSTEP1 TRISCbits.RC2
 
-#define STEP2 PORTBbits.RB1
-#define TSTEP2 TRISBbits.RB1
+#define STEP2 PORTAbits.RA1
+#define TSTEP2 TRISAbits.RA1
 
 #define TQ PORTCbits.RC1
 #define TTQ TRISCbits.RC1
@@ -70,6 +70,10 @@ void setTorque(TORQUE t)
 
 void setupMotors()
 {
+    ADCON1bits.PCFG0 = 1;
+    ADCON1bits.PCFG1 = 1;
+    ADCON1bits.PCFG2 = 1;
+    ADCON1bits.PCFG3 = 0;
     TDIR1 = 0;
     TDIR2 = 0;
     TSTEP1 = 0;
