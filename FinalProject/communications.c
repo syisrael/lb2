@@ -8,6 +8,7 @@
 #include <timers.h>
 #include <delays.h>
 #include "communications.h"
+#include "movement.h"
 #include "lcd.h"
 #include "lcd/xlcd.h"
 
@@ -19,7 +20,7 @@ char cmd[50];
 char screenbuff1[16] = "               ";
 char screenbuff2[16] = "               ";
 char * ptr;
-int x,y;
+long x,y;
 int row;
 
 void sendPString(const char* str)
@@ -47,12 +48,12 @@ void usartTask()
         switch (cmdType) {
         case 0x01: //Move To (x,y)
             while(BusyUSART());
-            getsUSART(&x,2);
+            getsUSART(&x,4);
             while(BusyUSART());
-            getsUSART(&y,2);
-            sprintf(screenbuff1,"To: %d,%d",x,y);
-            sendString(screenbuff1);
+            getsUSART(&y,4);
+            sprintf(screenbuff1,"To: %d,%d",(int)x,(int)y);
             printLCD(screenbuff1,screenbuff2);
+            moveTo(x,y);
             break;
          case 0x02: //Show message on LCD
             while(BusyUSART());
@@ -62,13 +63,13 @@ void usartTask()
             printLCD(screenbuff1,screenbuff2);
             break;
         case 0x03: //Extend magnets
-
+            extendSolenoid();
             break;
         case 0x11: //Retract magnets
-
+            retractSolenoid();
             break;
         case 0x12: //Return to home
-
+            resetPosition();
             break;
         case 0x13: //Request sensor data
             enableRead();

@@ -74,6 +74,7 @@ void setupMotors()
     ADCON1bits.PCFG1 = 1;
     ADCON1bits.PCFG2 = 1;
     ADCON1bits.PCFG3 = 0;
+
     TDIR1 = 0;
     TDIR2 = 0;
     TSTEP1 = 0;

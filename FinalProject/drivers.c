@@ -40,19 +40,25 @@ char str[30];
 void main(void)
 {
     int i = 0;
+    long a = 10000;
+    long b = -10000;
     setupSensors();
     sprintf(str,"U R D N GIN EAR");
     setupCommunications();
-    setupLCD();
     printLCD(str,str);
     setupMovement();
     Delay10KTCYx(10);
     while(1){
-        printLCD(str,str);
+        setupLCD();
         newRead();
         usartTask();
-        moveTo((long)rand(),50);
+        retractSolenoid();
+        moveTo(b,b);
+        moveTo(a,-a);
+        extendSolenoid();
+        moveTo(a,a);
+        moveTo(b,a);
         for(i=0;i<10;i++)
-        Delay10KTCYx(10);
+            Delay10KTCYx(10);
     }
 }

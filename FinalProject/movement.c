@@ -7,8 +7,12 @@
 #include "motors.h"
 #include "lcd.h"
 #include "movement.h"
-#define PI 3.14159265
-
+#define SOLENOID PORTAbits.RA2
+#define T_SOLENOID TRISAbits.RA2
+#define BUTTON_CHECK PORTAbits.RA3
+#define T_BUTTON_CHECK TRISAbits.RA3
+#define ENABLE PORTAbits.RA5
+#define T_ENABLE TRISAbits.RA5
 
 extern int str[30];
 
@@ -17,27 +21,31 @@ int currentY = 0;
 
 void tester(SPEED);
 long abs(long k);
-int gcd(long a,long b);
+long gcd(long a,long b);
 
 void setupMovement(){
     setupMotors();
     resetPosition();
+    T_SOLENOID = 0;
+    T_BUTTON_CHECK = 1;
+    T_ENABLE = 0;
 }
 
 void resetPosition()
 {
     setTorque(TORQUE_LOW);
-    moveTo(-50000,-50000);
+    moveTo(-5000,-5000);
 }
 
 void moveTo(long toX, long toY)
 {
-    long copyX = toX, copyY = toY;
-    long div = gcd(copyX,copyY);
-    long x1 = toX/div;
-    long y1 = toY/div;
+    long div = gcd(abs(toY),abs(toX));
+    long x1 = abs(toX)/div;
+    long y1 = abs(toY)/div;
     int i;
     SPEED s = FULL_SPEED;
+    ENABLE = 1;
+    setTorque(TORQUE_HIGH);
     if(toX > 0){
         setDir(MOTOR1,CW);
     }else{
@@ -48,10 +56,16 @@ void moveTo(long toX, long toY)
     }else{
         setDir(MOTOR2,CCW);
     }
-    sprintf(str,"To:%l,%l",toX,toY);
-    printLCD(str,str);
     
     for(i = 0; i < div; i++){
+        if(BUTTON_CHECK){
+            sprintf(str,"%d,%d",i*((int)x1),i*((int)y1));
+            printLCD(str,str);
+            ENABLE = 0;
+            while(BUTTON_CHECK)
+                Delay10KTCYx(10);
+            ENABLE = 1;
+        }
         step(MOTOR1,s,x1);
         step(MOTOR2,s,y1);
     }
@@ -100,6 +114,7 @@ void moveTo(long toX, long toY)
     tester(SLOW);
     sprintf(str,"DONE!             ");
     printLCD(str,str);*/
+    ENABLE = 0;
 }
 
 void tester(SPEED s)
@@ -121,8 +136,18 @@ void tester(SPEED s)
     Delay10KTCYx(10);
 }
 
+void extendSolenoid()
+{
+    SOLENOID = 1;
+}
 
-int gcd(long a,long b)
+void retractSolenoid()
+{
+    SOLENOID = 0;
+}
+
+
+long gcd(long a,long b)
 {
     if(b==0)
         return a;
