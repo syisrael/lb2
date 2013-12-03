@@ -1,15 +1,8 @@
-/*
- * File:   Sensors.h
- * Author: nissav
- *
- * Created on November 18, 2013, 2:59 PM
- */
-
 #ifndef SENSORS_H
 #define	SENSORS_H
 
 //Nissa's PIC Serial
-/*
+
 #define 	enable 		PORTDbits.RD0
 #define 	rst		PORTDbits.RD2
 #define		clkout		PORTDbits.RD1
@@ -21,7 +14,7 @@
 
 #define         sensor          PORTCbits.RC0
 #define		test		PORTDbits.RD4
-*/
+
 
 //Nissa's PIC Parallel
 /*
@@ -36,7 +29,7 @@
 #define 	b  		PORTCbits.RC3
 #define 	c  		PORTCbits.RC4
 #define 	d  		PORTCbits.RC5
-#define 	e  		PORTBbits.RB0
+#define 	e  		PORTBbits.RB0+
 #define 	f  		PORTBbits.RB1
 #define 	g  		PORTBbits.RB2
 #define 	h  		PORTBbits.RB3
@@ -48,18 +41,18 @@
 */
 
 //Sam's PIC
-
+/*
 #define 	enable 		PORTCbits.RC4   //try RE0
 #define 	rst		PORTEbits.RE1
 #define		clkout		PORTEbits.RE2
 
-#define         in0             PORTBbits.RB2
-#define         in1             PORTBbits.RB3
-#define         in2             PORTBbits.RB4
-#define         in3             PORTBbits.RB5
+#define         in0             PORTBbits.RA5
+#define         in1             PORTBbits.RB4
+#define         in2             PORTBbits.RB3
+#define         in3             PORTAbits.RA5
 
 #define         sensor          PORTCbits.RC0
-
+*/
 
 int readSensors(void);
 void newRead(void);

@@ -2,6 +2,7 @@
 #include <p18f452.h>
 #include <delays.h>
 #include "Sensors.h"
+#include "buttons.h"
 
 #pragma config WDT=OFF              // Watchdog off
 #pragma config BOR=OFF              // Brown out reset
@@ -30,15 +31,22 @@ extern int r0count[12],r1count[12],r2count[12],r3count[12],r4count[12],r5count[1
 //Sets up sensors inputs/outputs and set initial states
 void setupSensors(){
     //Nissa's PIC
-    /*TRISC = TRISB = 0xFF; //input
+    TRISC = TRISB = 0xFF; //input
     TRISA = 0x00;         //output
-    TRISD = 0x00;*/
+    TRISD = 0x00;
+
+    //Set AN pins to Digital I/O
+    ADCON1bits.PCFG0 = 1;
+    ADCON1bits.PCFG1 = 1;
+    ADCON1bits.PCFG2 = 1;
+    ADCON1bits.PCFG3 = 0;
       
     //Sam's PIC
-    TRISBbits.RB5 = 0;
-    TRISBbits.RB4 = 0;
-    TRISBbits.RB3 = 0;
-    TRISBbits.RB2 = 0;
+    /*
+    TRISAbits.RA5 = 0;
+    TRISAbits.RA4 = 0;
+    TRISAbits.RA3 = 0;
+    TRISAbits.RA2 = 0;
 
     TRISCbits.RC0 = 1;
 
@@ -47,7 +55,7 @@ void setupSensors(){
     TRISEbits.RE0 = 0;
     TRISEbits.RE1 = 0;
     TRISEbits.RE2 = 0;
-    
+    */
 
     nrow0 = readSensors();
     nrow1 = readSensors();
@@ -328,12 +336,13 @@ int readSensors(){
 
     return row;
 }*/
-/*
+
 void main(){
     setupSensors();
     clearCounts();
+    buttonSetup();
     while(1){
         newRead();
         Delay10KTCYx(1);
     }
-}*/
+}
