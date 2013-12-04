@@ -57,12 +57,18 @@ void clearLCD(void) {
 }
 
 void printLCD(char *line1, char *line2) {
-    if(strlen(line1) > 16){
-        line1[16] = '\0';
+    int i;
+    if (strlen(line1)<16){
+        for(i=strlen(line1);i <16;i++)
+            line1[i] = ' ';
     }
-    if(strlen(line2) > 16){
-        line2[16] = '\0';
+    if (strlen(line2)<16){
+        for(i=strlen(line2);i <16;i++)
+            line2[i] = ' ';
     }
+    line1[16] = '\0';
+    line2[16] = '\0';
+    
     openLCD();
     while (BusyXLCD());
     SetDDRamAddr(0x80);

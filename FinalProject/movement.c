@@ -13,6 +13,10 @@
 #define T_BUTTON_CHECK TRISAbits.RA3
 #define ENABLE PORTAbits.RA5
 #define T_ENABLE TRISAbits.RA5
+#define TILE_LENGTH 7700
+#define SQRT2 1.41421356237
+#define STARTX -16000
+#define STARTY -16000
 
 extern int str[30];
 
@@ -25,16 +29,58 @@ long gcd(long a,long b);
 
 void setupMovement(){
     setupMotors();
-    resetPosition();
     T_SOLENOID = 0;
     T_BUTTON_CHECK = 1;
     T_ENABLE = 0;
+    resetPosition();
 }
 
 void resetPosition()
 {
+    int i;
     setTorque(TORQUE_LOW);
-    moveTo(-5000,-5000);
+    for(i=0;i<12;i++){
+        move(DIAG_RIGHT_DWN);
+    }
+    /*
+    for(i=0;i<12;i++){
+        move(RIGHT);
+    }
+    for(i=0;i<9;i++){
+        move(DOWN);
+    }*/
+    moveTo(STARTX,STARTY);
+}
+
+void move(MOVEMENT d)
+{
+    setTorque(TORQUE_HIGH);
+    switch (d){
+        case UP:
+            moveTo(TILE_LENGTH,TILE_LENGTH);
+            break;
+        case DOWN:
+            moveTo(-TILE_LENGTH,-TILE_LENGTH);
+            break;
+        case RIGHT:
+            moveTo(TILE_LENGTH,-TILE_LENGTH);
+            break;
+        case LEFT:
+            moveTo(-TILE_LENGTH,TILE_LENGTH);
+            break;
+        case DIAG_RIGHT:
+            moveTo(TILE_LENGTH*SQRT2,0);
+            break;
+        case DIAG_LEFT:
+            moveTo(0,TILE_LENGTH*SQRT2);
+            break;
+        case DIAG_RIGHT_DWN:
+            moveTo(0,-TILE_LENGTH*SQRT2);
+            break;
+        case DIAG_LEFT_DWN:
+            moveTo(-TILE_LENGTH*SQRT2,0);
+            break;
+    }
 }
 
 void moveTo(long toX, long toY)
@@ -45,16 +91,15 @@ void moveTo(long toX, long toY)
     int i;
     SPEED s = FULL_SPEED;
     ENABLE = 1;
-    setTorque(TORQUE_HIGH);
     if(toX > 0){
-        setDir(MOTOR1,CW);
-    }else{
         setDir(MOTOR1,CCW);
+    }else{
+        setDir(MOTOR1,CW);
     }
     if(toY > 0){
-        setDir(MOTOR2,CW);
-    }else{
         setDir(MOTOR2,CCW);
+    }else{
+        setDir(MOTOR2,CW);
     }
     
     for(i = 0; i < div; i++){

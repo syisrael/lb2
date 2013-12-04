@@ -40,24 +40,43 @@ char str[30];
 void main(void)
 {
     int i = 0;
-    long a = 10000;
-    long b = -10000;
     setupSensors();
+    clearCounts();
+    setupLCD();
     sprintf(str,"U R D N GIN EAR");
     setupCommunications();
     printLCD(str,str);
     setupMovement();
     Delay10KTCYx(10);
     while(1){
+        //retractSolenoid();
         setupLCD();
         newRead();
         usartTask();
-        retractSolenoid();
-        moveTo(b,b);
-        moveTo(a,-a);
+        
+       // move(DIAG_RIGHT);
+       // move(DIAG_RIGHT_DWN);
+       //extendSolenoid();
+        //move(DIAG_LEFT_DWN);
+        //move(DIAG_LEFT);
+        /*for(i=0;i<8;i++){
+            move(DIAG_LEFT);
+        }
+
+        for(i=0;i<8;i++){
+            move(UP);
+            move(LEFT);
+        }
+        for(i=0;i<8;i++){
+            move(DOWN);
+            move(RIGHT);
+        }*/
+        
+        /*move(UP);
+        move(RIGHT);
         extendSolenoid();
-        moveTo(a,a);
-        moveTo(b,a);
+        move(DOWN);
+        move(LEFT);*/
         for(i=0;i<10;i++)
             Delay10KTCYx(10);
     }

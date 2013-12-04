@@ -9,26 +9,32 @@
 //...
 //row7->> edge1 edge2 a b c d e f g h edge3 edge4
 
+//int nrow0,nrow1,nrow2,nrow3,nrow4,nrow5,nrow6,nrow7;
+//int orow0,orow1,orow2,orow3,orow4,orow5,orow6,orow7;
+//int r0count[12],r1count[12],r2count[12],r3count[12],r4count[12],r5count[12],r6count[12],r7count[12];
+
 int nrow0,nrow1,nrow2,nrow3,nrow4,nrow5,nrow6,nrow7;
 int orow0,orow1,orow2,orow3,orow4,orow5,orow6,orow7;
 int r0count[12],r1count[12],r2count[12],r3count[12],r4count[12],r5count[12],r6count[12],r7count[12];
 
-//extern int nrow0,nrow1,nrow2,nrow3,nrow4,nrow5,nrow6,nrow7;
-//extern int orow0,orow1,orow2,orow3,orow4,orow5,orow6,orow7;
-//extern int r0count[12],r1count[12],r2count[12],r3count[12],r4count[12],r5count[12],r6count[12],r7count[12];
-
 //Sets up sensors inputs/outputs and set initial states
 void setupSensors(){
     //Nissa's PIC
-    /*TRISC = TRISB = 0xFF; //input
+   /* TRISC = TRISB = 0xFF; //input
     TRISA = 0x00;         //output
     TRISD = 0x00;*/
+
+    //Set AN pins to Digital I/O
+    ADCON1bits.PCFG0 = 1;
+    ADCON1bits.PCFG1 = 1;
+    ADCON1bits.PCFG2 = 1;
+    ADCON1bits.PCFG3 = 0;
       
     //Sam's PIC
-    TRISBbits.RB5 = 0;
-    TRISBbits.RB4 = 0;
-    TRISBbits.RB3 = 0;
-    TRISBbits.RB2 = 0;
+    tin0 = 0;
+    tin1 = 0;
+    tin2 = 0;
+    tin3 = 0;
 
     TRISCbits.RC0 = 1;
 
@@ -49,7 +55,6 @@ void setupSensors(){
     nrow7 = readSensors();
 
     saveBackup();
-    clearCounts();
 }
 
 //Saves current state to previous state
@@ -66,7 +71,7 @@ void saveBackup(){
 
 void makeCounts(int* counts, int rowNew, int rowOld){
     int i = 0;
-    int temp = 0;
+    int temp;
     if(rowNew != rowOld){
         temp = rowNew ^ rowOld;
         for(i = 0; i < 12; i++){
@@ -318,13 +323,4 @@ int readSensors(){
     Delay10KTCYx(1);
 
     return row;
-}*/
-/*
-void main(){
-    setupSensors();
-    clearCounts();
-    while(1){
-        newRead();
-        Delay10KTCYx(1);
-    }
 }*/
