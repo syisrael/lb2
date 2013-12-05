@@ -41,7 +41,6 @@ void main(void)
 {
     int i = 0;
     setupSensors();
-    clearCounts();
     setupLCD();
     sprintf(str,"U R D N GIN EAR");
     setupCommunications();

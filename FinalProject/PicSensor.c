@@ -54,7 +54,9 @@ void setupSensors(){
     nrow6 = readSensors();
     nrow7 = readSensors();
 
+    newRead();
     saveBackup();
+    clearCounts();
 }
 
 //Saves current state to previous state
@@ -71,11 +73,13 @@ void saveBackup(){
 
 void makeCounts(int* counts, int rowNew, int rowOld){
     int i = 0;
-    int temp;
+    int temp = 0;
+    int ander = 0;
     if(rowNew != rowOld){
         temp = rowNew ^ rowOld;
         for(i = 0; i < 12; i++){
-            if(temp == 1){
+            ander = temp & 1;
+            if((temp & 1) == 1){
                 counts[i]++;
             }
             temp >>= 1;
