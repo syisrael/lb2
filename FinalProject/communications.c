@@ -15,13 +15,19 @@
 #define ACK 0x06
 #define NAK 0x15
 
+void Ack();
+
 char cmdType;
 char cmd[50];
-char screenbuff1[16] = "               ";
-char screenbuff2[16] = "               ";
+char screenbuff1[30];
+char screenbuff2[30];
 char * ptr;
-long x,y;
+char dir;
 int row;
+int* wrow;
+extern int nrow0,nrow1,nrow2,nrow3,nrow4,nrow5,nrow6,nrow7;
+extern int r0count[12],r1count[12],r2count[12],r3count[12],r4count[12],r5count[12],r6count[12],r7count[12];
+extern char gameSettings;
 
 void sendPString(const char* str)
 {
@@ -39,65 +45,165 @@ void sendString(char *str)
 void usartTask()
 {
     int i;
-        if (DataRdyUSART()) {
+    while(BusyUSART());
+    if (DataRdyUSART()) {
+        cmdType = getcUSART();
+    }
+
+    switch (cmdType) {
+    case 0x1D: //Move To UP/DOWN/LEFT/RIGHT/DIAGONAL
+        Ack();
+        while(!DataRdyUSART());
+        dir = getcUSART();
+        Ack();
+        setupLCD();
+        sprintf(screenbuff1,"To: %d, %c",(int)dir,dir);
+        printLCD(screenbuff1,screenbuff2);
+        move((int)dir);
+        break;
+     case 0x02: //Show message on LCD
+        Ack();
+        while(BusyUSART());
+        getsUSART(cmd,32);
+        Ack();
+        setupLCD();
+        strncpy(screenbuff1,cmd,16);
+        strncpy(screenbuff2,&cmd[16],16);
+        printLCD(screenbuff1,screenbuff2);
+        break;
+    case 0x03: //Extend magnets
+        Ack();
+        extendSolenoid();
+        break;
+    case 0x11: //Retract magnets
+        Ack();
+        retractSolenoid();
+        break;
+    case 0x12: //Sensor reset
+        Ack();
+        saveBackup();
+        break;
+    case 0x13: //Request sensor data
+        Ack();
+        row = nrow0;
+        while(BusyUSART());
+        putcUSART(((char*)&row)[0]);
+        while(BusyUSART());
+        putcUSART(((char*)&row)[1]);
+        row = nrow1;
+        while(BusyUSART());
+        putcUSART(((char*)&row)[0]);
+        while(BusyUSART());
+        putcUSART(((char*)&row)[1]);
+        row = nrow2;
+        while(BusyUSART());
+        putcUSART(((char*)&row)[0]);
+        while(BusyUSART());
+        putcUSART(((char*)&row)[1]);
+        row = nrow3;
+        while(BusyUSART());
+        putcUSART(((char*)&row)[0]);
+        while(BusyUSART());
+        putcUSART(((char*)&row)[1]);
+        row = nrow4;
+        while(BusyUSART());
+        putcUSART(((char*)&row)[0]);
+        while(BusyUSART());
+        putcUSART(((char*)&row)[1]);
+        row = nrow5;
+        while(BusyUSART());
+        putcUSART(((char*)&row)[0]);
+        while(BusyUSART());
+        putcUSART(((char*)&row)[1]);
+        row = nrow6;
+        while(BusyUSART());
+        putcUSART(((char*)&row)[0]);
+        while(BusyUSART());
+        putcUSART(((char*)&row)[1]);
+        row = nrow7;
+        while(BusyUSART());
+        putcUSART(((char*)&row)[0]);
+        while(BusyUSART());
+        putcUSART(((char*)&row)[1]);
+        break;
+    case 0x14: //Request sensor count
+        Ack();
+        wrow = r0count;
+        for(i=0;i<12;i++){
+            row = wrow[i];
             while(BusyUSART());
-            cmdType = getcUSART();
-            putcUSART(0x06);
+            putcUSART(((char*)&row)[0]);
+        }
+        
+        wrow = r1count;
+        for(i=0;i<12;i++){
+            row = wrow[i];
+            while(BusyUSART());
+            putcUSART(((char*)&row)[0]);
+        }
+        
+        wrow = r2count;
+        for(i=0;i<12;i++){
+            row = wrow[i];
+            while(BusyUSART());
+            putcUSART(((char*)&row)[0]);
+        }
+        
+        wrow = r3count;
+        for(i=0;i<12;i++){
+            row = wrow[i];
+            while(BusyUSART());
+            putcUSART(((char*)&row)[0]);
+        }
+        
+        wrow = r4count;
+        for(i=0;i<12;i++){
+            row = wrow[i];
+            while(BusyUSART());
+            putcUSART(((char*)&row)[0]);
+        }
+        
+        wrow = r5count;
+        for(i=0;i<12;i++){
+            row = wrow[i];
+            while(BusyUSART());
+            putcUSART(((char*)&row)[0]);
+        }
+        
+        wrow = r6count;
+        for(i=0;i<12;i++){
+            row = wrow[i];
+            while(BusyUSART());
+            putcUSART(((char*)&row)[0]);
         }
 
-        switch (cmdType) {
-        case 0x01: //Move To (x,y)
+        wrow = r7count;
+        for(i=0;i<12;i++){
+            row = wrow[i];
             while(BusyUSART());
-            getsUSART(&x,4);
-            while(BusyUSART());
-            getsUSART(&y,4);
-            sprintf(screenbuff1,"To: %d,%d",(int)x,(int)y);
-            printLCD(screenbuff1,screenbuff2);
-            moveTo(x,y);
-            break;
-         case 0x02: //Show message on LCD
-            while(BusyUSART());
-            getsUSART(cmd,32);
-            strncpy(screenbuff1,cmd,16);
-            strncpy(screenbuff2,&cmd[16],16);
-            printLCD(screenbuff1,screenbuff2);
-            break;
-        case 0x03: //Extend magnets
-            extendSolenoid();
-            break;
-        case 0x11: //Retract magnets
-            retractSolenoid();
-            break;
-        case 0x12: //Return to home
-            resetPosition();
-            break;
-        case 0x13: //Request sensor data
-            enableRead();
-            Delay10TCYx(1);
-            for(i=0;i<8;i++){
-                row = readSensors();
-                putcUSART(((char*)&row)[0]);
-                putcUSART(((char*)&row)[1]);
-                putcUSART(((char*)&row)[2]);
-                Delay10TCYx(1);
-            }
-            disableRead();
-            break;
-        case 0x14: //Request sensor count
-                    
-            break;
-        case 0xff:
-            break;
+            putcUSART(((char*)&row)[0]);
         }
+        break;
+    case 0x1C: //Request game settings
+        Ack();
+        while(BusyUSART());
+        putcUSART(gameSettings);
+        break;
+    default:
+        break;
+    }
 
-        for(i=0;i<50;i++){
-            cmd[i] = ' ';
-        }
-        cmd[49] = '\0';
-        cmdType = 0xff;
+    for(i=0;i<50;i++){
+        cmd[i] = ' ';
+    }
+    cmd[49] = '\0';
+    cmdType = 0xff;
 }
 
-
+void Ack(){
+    while(BusyUSART());
+    putcUSART(ACK);
+}
 
 void setupCommunications()
 {

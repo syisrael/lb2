@@ -46,13 +46,13 @@
 #define		clkout		PORTEbits.RE2
 
 #define         in0             PORTBbits.RB5
-#define         tin0             TRISBbits.RB5
+#define         tin0            TRISBbits.RB5
 #define         in1             PORTBbits.RB4
-#define         tin1             TRISBbits.RB4
+#define         tin1            TRISBbits.RB4
 #define         in2             PORTBbits.RB3
-#define         tin2             TRISBbits.RB3
-#define         in3             PORTBbits.RB2
-#define         tin3             TRISBbits.RB2
+#define         tin2            TRISBbits.RB3
+#define         in3             PORTAbits.RA3
+#define         tin3            TRISAbits.RA3
 
 #define         sensor          PORTCbits.RC0
 
@@ -63,8 +63,9 @@ void disableRead(void);
 void enableRead(void);
 void clearCounts(void);
 void clearOne(char row, int column);
-void makeCounts(int* counts, int rowNew, int rowOld);
+char makeCounts(int*, int, int, int);
 void saveBackup(void);
+void saveState(void);
 
 #endif	/* SENSORS_H */
 

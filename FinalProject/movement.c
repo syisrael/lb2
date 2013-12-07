@@ -9,14 +9,15 @@
 #include "movement.h"
 #define SOLENOID PORTAbits.RA2
 #define T_SOLENOID TRISAbits.RA2
-#define BUTTON_CHECK PORTAbits.RA3
-#define T_BUTTON_CHECK TRISAbits.RA3
+//#define BUTTON_CHECK PORTAbits.RA3
+//#define T_BUTTON_CHECK TRISAbits.RA3
 #define ENABLE PORTAbits.RA5
 #define T_ENABLE TRISAbits.RA5
-#define TILE_LENGTH 7700
+#define TILE_LENGTH 3820
 #define SQRT2 1.41421356237
-#define STARTX -16000
-#define STARTY -16000
+#define DIAG_LENGTH 10677*1.25/2
+#define STARTX 17000
+#define STARTY 2000
 
 extern int str[30];
 
@@ -30,26 +31,29 @@ long gcd(long a,long b);
 void setupMovement(){
     setupMotors();
     T_SOLENOID = 0;
-    T_BUTTON_CHECK = 1;
     T_ENABLE = 0;
-    resetPosition();
+    ENABLE = 0;
+    retractSolenoid();
+    //resetPosition();
 }
 
 void resetPosition()
 {
     int i;
-    setTorque(TORQUE_LOW);
-    for(i=0;i<12;i++){
+    setTorque(TORQUE_HIGH);
+    /*for(i=0;i<12;i++){
         move(DIAG_RIGHT_DWN);
     }
-    /*
+    
     for(i=0;i<12;i++){
         move(RIGHT);
     }
     for(i=0;i<9;i++){
         move(DOWN);
     }*/
-    moveTo(STARTX,STARTY);
+    moveTo(-STARTX,STARTX);
+    moveTo(STARTY,STARTY);
+
 }
 
 void move(MOVEMENT d)
@@ -69,16 +73,16 @@ void move(MOVEMENT d)
             moveTo(-TILE_LENGTH,TILE_LENGTH);
             break;
         case DIAG_RIGHT:
-            moveTo(TILE_LENGTH*SQRT2,0);
+            moveTo(DIAG_LENGTH,0);
             break;
         case DIAG_LEFT:
-            moveTo(0,TILE_LENGTH*SQRT2);
+            moveTo(0,DIAG_LENGTH);
             break;
         case DIAG_RIGHT_DWN:
-            moveTo(0,-TILE_LENGTH*SQRT2);
+            moveTo(0,-DIAG_LENGTH);
             break;
         case DIAG_LEFT_DWN:
-            moveTo(-TILE_LENGTH*SQRT2,0);
+            moveTo(-DIAG_LENGTH,0);
             break;
     }
 }
@@ -103,62 +107,17 @@ void moveTo(long toX, long toY)
     }
     
     for(i = 0; i < div; i++){
-        if(BUTTON_CHECK){
+        /*if(BUTTON_CHECK){
             sprintf(str,"%d,%d",i*((int)x1),i*((int)y1));
             printLCD(str,str);
             ENABLE = 0;
             while(BUTTON_CHECK)
                 Delay10KTCYx(10);
             ENABLE = 1;
-        }
+        }*/
         step(MOTOR1,s,x1);
         step(MOTOR2,s,y1);
     }
-    /*int x = toX - currentX;
-    int y = toY - currentY;
-    double len = sqrt(x^2+y^2);
-    double angle;
-    int x2,y2;
-
-    if(y>0)
-        angle = acos(x/len);
-    else if(x>0)
-        angle = asin(y/len);
-    else
-        angle = atan(y/x) - PI;
-
-    angle += PI/4;
-
-    if(angle > 0 && angle < PI) //y2 increasing
-        setDir(MOTOR1,CW);
-    else
-        setDir(MOTOR1,CCW);
-    if(angle > -PI/2 && angle < PI/2) //x2 increasing
-        setDir(MOTOR2,CW);
-    else
-        setDir(MOTOR2,CCW);
-
-    x2 = abs(cos(angle)) * len;
-    y2 = abs(sin(angle)) * len;*/
-
-
-    /*setTorque(TORQUE_HIGH);
-    sprintf(str,"Mode: FULL SPEED   ");
-    printLCD(str,str);
-    tester(FULL_SPEED);
-
-    
-    sprintf(str,"Mode: FAST         ");
-    printLCD(str,str);
-    tester(FAST);
-    sprintf(str,"Mode: STANDARD     ");
-    printLCD(str,str);
-    tester(STANDARD);
-    sprintf(str,"Mode: SLOW         ");
-    printLCD(str,str);
-    tester(SLOW);
-    sprintf(str,"DONE!             ");
-    printLCD(str,str);*/
     ENABLE = 0;
 }
 
