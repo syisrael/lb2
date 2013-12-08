@@ -156,45 +156,50 @@ void enableRead(){
 void disableRead(){
     enable = 0;
     Nop();
-    //Delay10TCYx(1);
+    //Nop();
+    //Delay10KTCYx(1);
 }
 
 void newRead(){
     char sum = 0;
     saveState();
     enableRead();
-    
-    nrow0 = readSensors();
-    sum += makeCounts(r0count,nrow0,orow0,brow0);
-   // Delay10TCYx(1);
-    nrow1 = readSensors();
-    sum += makeCounts(r1count,nrow1,orow1,brow1);
-   // Delay10TCYx(1);
-    nrow2 = readSensors();
-    sum += makeCounts(r2count,nrow2,orow2,brow2);
-    //Delay10TCYx(1);
-    nrow3 = readSensors();
-    sum += makeCounts(r3count,nrow3,orow3,brow3);
-    //Delay10TCYx(1);
 
-    nrow4 = readSensors();
-    sum += makeCounts(r4count,nrow4,orow4,brow4);
-    //Delay10TCYx(1);
-    nrow5 = readSensors();
-    sum += makeCounts(r5count,nrow5,orow5,brow5);
-    //Delay10TCYx(1);
-    nrow6 = readSensors();
-    sum += makeCounts(r6count,nrow6,orow6,brow6);
     //Delay10TCYx(1);
     nrow7 = readSensors();
     sum += makeCounts(r7count,nrow7,orow7,brow7);
     //Delay10TCYx(1);
+    nrow6 = readSensors();
+    sum += makeCounts(r6count,nrow6,orow6,brow6);
+    //Delay10TCYx(1);
+    nrow5 = readSensors();
+    sum += makeCounts(r5count,nrow5,orow5,brow5);
+    //Delay10TCYx(1);
+    nrow4 = readSensors();
+    sum += makeCounts(r4count,nrow4,orow4,brow4);
+    //Delay10TCYx(1);
+
+    nrow3 = readSensors();
+    sum += makeCounts(r3count,nrow3,orow3,brow3);
+    //Delay10TCYx(1);
+    nrow2 = readSensors();
+    sum += makeCounts(r2count,nrow2,orow2,brow2);
+    //Delay10TCYx(1);
+    nrow1 = readSensors();
+    sum += makeCounts(r1count,nrow1,orow1,brow1);
+    //Delay10TCYx(1);
+    nrow0 = readSensors();
+    disableRead();
+    sum += makeCounts(r0count,nrow0,orow0,brow0);
+    //Delay10TCYx(1);
+
     
+
     if (sum == 0) {
         clearCounts();
     }
 
-    disableRead();
+    
 }
 
 //#define DELAY_READ Delay10TCYx(1)
@@ -206,72 +211,16 @@ int readSensors(){
     DELAY_READ;
     clkout = 1;
 
-    in0=0;
-    in1=0;
+    in0=1;
+    in1=1;
     in2=0;
-    in3=0;
+    in3=1;
     DELAY_READ;
     row = sensor;
     row <<= 1;
 
-    in0=1;
-    in1=0;
-    in2=0;
-    in3=0;
-    DELAY_READ;
-    row |= sensor;
-    row <<= 1;
-
     in0=0;
     in1=1;
-    in2=0;
-    in3=0;
-    DELAY_READ;
-    row |= sensor;
-    row <<= 1;
-
-    in0=1;
-    in1=1;
-    in2=0;
-    in3=0;
-    DELAY_READ;
-    row |= sensor;
-    row <<= 1;
-
-    in0=0;
-    in1=0;
-    in2=1;
-    in3=0;
-    DELAY_READ;
-    row |= sensor;
-    row <<= 1;
-
-    in0=1;
-    in1=0;
-    in2=1;
-    in3=0;
-    DELAY_READ;
-    row |= sensor;
-    row <<= 1;
-
-    in0=0;
-    in1=1;
-    in2=1;
-    in3=0;
-    DELAY_READ;
-    row |= sensor;
-    row <<= 1;
-
-    in0=1;
-    in1=1;
-    in2=1;
-    in3=0;
-    DELAY_READ;
-    row |= sensor;
-    row <<= 1;
-
-    in0=0;
-    in1=0;
     in2=0;
     in3=1;
     DELAY_READ;
@@ -287,7 +236,7 @@ int readSensors(){
     row <<= 1;
 
     in0=0;
-    in1=1;
+    in1=0;
     in2=0;
     in3=1;
     DELAY_READ;
@@ -296,8 +245,64 @@ int readSensors(){
 
     in0=1;
     in1=1;
+    in2=1;
+    in3=0;
+    DELAY_READ;
+    row |= sensor;
+    row <<= 1;
+
+    in0=0;
+    in1=1;
+    in2=1;
+    in3=0;
+    DELAY_READ;
+    row |= sensor;
+    row <<= 1;
+
+    in0=1;
+    in1=0;
+    in2=1;
+    in3=0;
+    DELAY_READ;
+    row |= sensor;
+    row <<= 1;
+
+    in0=0;
+    in1=0;
+    in2=1;
+    in3=0;
+    DELAY_READ;
+    row |= sensor;
+    row <<= 1;
+
+    in0=1;
+    in1=1;
     in2=0;
-    in3=1;
+    in3=0;
+    DELAY_READ;
+    row |= sensor;
+    row <<= 1;
+
+    in0=0;
+    in1=1;
+    in2=0;
+    in3=0;
+    DELAY_READ;
+    row |= sensor;
+    row <<= 1;
+
+    in0=1;
+    in1=0;
+    in2=0;
+    in3=0;
+    DELAY_READ;
+    row |= sensor;
+    row <<= 1;
+
+    in0=0;
+    in1=0;
+    in2=0;
+    in3=0;
     DELAY_READ;
     row |= sensor;
 

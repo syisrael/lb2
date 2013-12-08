@@ -13,11 +13,11 @@
 //#define T_BUTTON_CHECK TRISAbits.RA3
 #define ENABLE PORTAbits.RA5
 #define T_ENABLE TRISAbits.RA5
-#define TILE_LENGTH 3820
+#define TILE_LENGTH 2545
 #define SQRT2 1.41421356237
 #define DIAG_LENGTH 10677*1.25/2
-#define STARTX 17000
-#define STARTY 2000
+#define STARTX 10500
+#define STARTY 1740
 
 extern int str[30];
 
@@ -34,26 +34,35 @@ void setupMovement(){
     T_ENABLE = 0;
     ENABLE = 0;
     retractSolenoid();
-    //resetPosition();
+    resetPosition();
 }
 
 void resetPosition()
 {
     int i;
     setTorque(TORQUE_HIGH);
-    /*for(i=0;i<12;i++){
-        move(DIAG_RIGHT_DWN);
+    /*while(currentY > 0){
+        move(DOWN);
     }
-    
-    for(i=0;i<12;i++){
+    while(currentX > 0){
         move(RIGHT);
     }
-    for(i=0;i<9;i++){
-        move(DOWN);
-    }*/
+    move(DOWN);
+    move(DOWN);
+    move(DOWN);
+    move(RIGHT);
+    move(RIGHT);
+    move(RIGHT);
+    move(RIGHT);
+    move(RIGHT);
+    for(i=0;i<500;i++)
+    Delay10KTCYx(10);
+    currentY = 0;
+    currentX = 0;*/
     moveTo(-STARTX,STARTX);
     moveTo(STARTY,STARTY);
-
+    move(UP);
+    move(LEFT);
 }
 
 void move(MOVEMENT d)
@@ -62,15 +71,19 @@ void move(MOVEMENT d)
     switch (d){
         case UP:
             moveTo(TILE_LENGTH,TILE_LENGTH);
+            currentY++;
             break;
         case DOWN:
             moveTo(-TILE_LENGTH,-TILE_LENGTH);
+            currentY--;
             break;
         case RIGHT:
             moveTo(TILE_LENGTH,-TILE_LENGTH);
+            currentX--;
             break;
         case LEFT:
             moveTo(-TILE_LENGTH,TILE_LENGTH);
+            currentX++;
             break;
         case DIAG_RIGHT:
             moveTo(DIAG_LENGTH,0);

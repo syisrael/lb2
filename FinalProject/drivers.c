@@ -28,14 +28,11 @@ void main(void)
     sprintf(str,"U R D N GIN EAR");
     setupCommunications();
     printLCD(str,str);
-    //setupMovement();
+    setupMovement();
+    //buttonSetup();
     Delay10KTCYx(10);
-    
-    //enableRead();
-
     while(1){
         newRead();
         usartTask();
-        Delay10TCYx(1);
     }
 }

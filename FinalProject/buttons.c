@@ -49,10 +49,6 @@ void interruptHandler(void)
         INTCON3bits.INT2IF = 0;
         INTCON3bits.INT2IE = 1;
     }
-    if(INTCON1bits.TMR0IF == 1){
-        //newRead();
-        INTCON1bits.TMR0IF = 0;
-    }
 }
 #pragma code
 
@@ -104,7 +100,7 @@ void buttonSetup()
     INTCON3bits.INT1IF = 0;
     INTCON3bits.INT2IF = 0;
 
-    OpenTimer0( TIMER_INT_OFF & T0_8BIT & T0_SOURCE_INT & T0_PS_1_32);
+    //OpenTimer0( TIMER_INT_OFF & T0_8BIT & T0_SOURCE_INT & T0_PS_1_32);
     lineStates();
     printLCD(line1,line2);
     
