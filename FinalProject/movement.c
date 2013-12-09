@@ -16,8 +16,8 @@
 #define TILE_LENGTH 2545
 #define SQRT2 1.41421356237
 #define DIAG_LENGTH 10677*1.25/2
-#define STARTX 10500
-#define STARTY 1740
+#define STARTX 10700
+#define STARTY 1750
 
 extern int str[30];
 
@@ -34,7 +34,7 @@ void setupMovement(){
     T_ENABLE = 0;
     ENABLE = 0;
     retractSolenoid();
-    resetPosition();
+    //resetPosition();
 }
 
 void resetPosition()

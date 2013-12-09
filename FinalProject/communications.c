@@ -48,6 +48,7 @@ void usartTask()
     while(BusyUSART());
     if (DataRdyUSART()) {
         cmdType = getcUSART();
+
     }
 
     switch (cmdType) {
@@ -79,10 +80,14 @@ void usartTask()
         Ack();
         retractSolenoid();
         break;
-    case 0x12: //Sensor reset
+    case 0x12: //Sensor backup reset
         Ack();
         saveBackup();
         break;
+    case 0x1E: //Sensor clear counts
+        Ack();
+        clearCounts();
+    break;
     case 0x13: //Request sensor data
         //Ack();
         row = nrow0;
