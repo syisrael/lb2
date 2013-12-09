@@ -17,6 +17,7 @@ void InterruptVectorHigh (void);
 void timerISR (void);
 void groupSettings(void);
 void lineStates(void);
+void menu(void);
 
 
 #endif	/* BUTTONS_H */

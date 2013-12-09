@@ -7,7 +7,8 @@
 #include <p18f452.h>
 #include <stdio.h>
 
-char line1[30], line2[30];
+char line1[30] = "                         ";
+char line2[30] = "                         ";
 char check = 0;
 int state = 1;
 char sounds = 1;
@@ -15,8 +16,11 @@ char hints = 1;
 char firstMove = 1;
 char settingTime = 1;
 char gameMode = 1;
-
-char gameSettings;
+char menuFlag = 1;
+char gameSettings = 11111;
+char select = 0;
+char up = 0;
+char down = 0;
 
 //default with all 1's: sounds on, hints on, firstMove player,
 //                      settingTime 3 seconds, gameMode Player vs Computer
@@ -28,7 +32,7 @@ void interruptHandler(void)
 {
     if(INTCON1bits.INT0IF == 1){   //INT 0
         INTCON1bits.INT0IE = 0;
-        menuSelect();
+        select = 1;
         Delay10KTCYx(0);
         INTCON1bits.INT0IF = 0;
         INTCON1bits.INT0IE = 1;
@@ -36,7 +40,7 @@ void interruptHandler(void)
 
     if(INTCON3bits.INT1IF == 1){   //INT 1
         INTCON3bits.INT1IE = 0;
-        menuDown();
+        down = 1;
         Delay10KTCYx(0);
         INTCON3bits.INT1IF = 0;
         INTCON3bits.INT1IE = 1;
@@ -44,7 +48,7 @@ void interruptHandler(void)
 
     if(INTCON3bits.INT2IF == 1) {  //INT 2
         INTCON3bits.INT2IE = 0;
-        menuUp();
+        up = 1;
         Delay10KTCYx(0);
         INTCON3bits.INT2IF = 0;
         INTCON3bits.INT2IE = 1;
@@ -65,11 +69,11 @@ void groupSettings()
     gameSettings = gameMode;
     gameSettings <<= 1;
     gameSettings |= firstMove;
-    gameSettings << 1;
+    gameSettings <<= 1;
     gameSettings |= hints;
-    gameSettings << 1;
+    gameSettings <<= 1;
     gameSettings |= sounds;
-    gameSettings << 1;
+    gameSettings <<= 1;
     gameSettings |= settingTime;
 }
 
@@ -81,7 +85,7 @@ void buttonSetup()
 
     groupSettings();
 
-    RCONbits.IPEN = 1;
+    RCONbits.IPEN = 0;
     INTCON1bits.GIE_GIEH = 1;
 
     INTCON2bits.RBPU = 1;
@@ -186,11 +190,26 @@ void lineStates()
     }
 }
 
+void menu(){
+    if(select){
+        menuSelect();
+        select = 0;
+    }else if(up){
+        menuUp();
+        up = 0;
+    }else if(down){
+        menuDown();
+        down = 0;
+    }
+}
+
 void menuUp() //RB2
 {
     if(state == 1){
         state++;
-    }else if(state !=2 && state != 4 && state !=7 && state !=12 && state != 14 && state != 16 && state != 18 && state && state !=20 && state !=21 && state !=22 && state != 23 && state !=24 && state !=25 && state !=26 && state !=27){
+    }else if(state !=2 && state != 4 && state !=7 && state !=12 && state != 14 
+            && state != 16 && state != 18 && state && state !=20 && state !=21
+            && state !=22 && state != 23 && state !=24 && state !=25 && state !=26 && state !=27){
         state--;
     }
     lineStates();
@@ -201,7 +220,9 @@ void menuDown() //RB1
 {
     if(state == 1){
         state++;
-    }else if(state != 3 && state != 6 && state != 11 && state != 13 && state != 15 && state != 17 && state != 19 && state !=20 && state !=21 && state !=22 && state != 23 && state !=24 && state !=25 && state !=26 && state !=27 ){
+    }else if(state != 3 && state != 6 && state != 11 && state != 13 && state != 15 
+            && state != 17 && state != 19 && state !=20 && state !=21 && state !=22
+            && state != 23 && state !=24 && state !=25 && state !=26 && state !=27 ){
         state++;
     }
     lineStates();
@@ -221,11 +242,15 @@ void menuSelect() //RB0
         gameMode = 1;
         state = 20;
         groupSettings();
+        menuFlag = 0;
+        INTCONbits.GIE = 0;
     }else if(state == 5){
         //Computer vs computer
         gameMode = 0;
         state = 21;
         groupSettings();
+        menuFlag = 0;
+        INTCONbits.GIE = 0;
     }else if(state == 6){
         state = 2;
     }else if(state == 7){
@@ -271,8 +296,9 @@ void menuSelect() //RB0
         settingTime = 1;
         state = 27;
     }else if(state == 20 || state == 21){
-        //starting game return to menu
-        state = 2;
+        //never reached debugging only after game start
+        menuFlag = 0;
+        INTCONbits.GIE = 0;
     }else if(state = 23 || state == 24 || state == 25 || state ==26 || state == 27){
         //setting option selected return to settings menu
         state = 7;
